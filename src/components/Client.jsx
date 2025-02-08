@@ -1,226 +1,130 @@
-import "react";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "../helper/axios";
 import Model from "react-modal";
 import { MdCancel } from "react-icons/md";
 
 const Client = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [clients, setClients] = useState([]);
+  const [formData, setFormData] = useState({
+    Name: "",
+    Emial: "",
+    Conatct_Number: "",
+    Location: "",
+  });
+
+  // Fetch client data from FastAPI
+  useEffect(() => {
+    axios
+      .get("/api/clients/")
+      .then((response) => setClients(response.data))
+      .catch((error) => console.error("Error fetching clients:", error));
+  }, []);
+
+  // Handle input changes
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // Handle form submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    axios
+      .post("/api/clients/", formData)
+      .then((response) => {
+        setClients([...clients, response.data]); // Update table data
+        setIsOpen(false); // Close modal
+        setFormData({ Name: "", Emial: "", Conatct_Number: "", Location: "" }); // Reset form
+      })
+      .catch((error) => console.error("Error adding client:", error));
+  };
+
   return (
-    <div className="my-48 mx-10">
-      
-      <div className="flex justify-between h-10 ">
-        <div className="flex gap-4 items-center border border-gray-300 rounded-md w-[30%]  px-4 py-7">
-          <img
-            className="object-none"
-            src="/LeftColumn/search-normal.png"
-            alt=""
-          />{" "}
-          <input className="outline-none" type="text" placeholder="Search by Client" />
+    <div className="mx-10 my-48">
+      <div className="flex justify-between h-10">
+        <div className="flex gap-4 items-center border border-gray-300 rounded-md w-[30%] px-4 py-2">
+          <input className="w-full outline-none" type="text" placeholder="Search by Client" />
         </div>
-        <div className="">
-          
         <button
-            type="button"
-            className="bg-blue-900 text-xl py-2 px-10 rounded-md text-white"
-            onClick={() => setIsOpen(true)}
-          >
-            Add
-          </button>
-
-          <Model
-            isOpen={isOpen}
-            
-            
-            style={{
-              overlay: {
-                backdropFilter: "blur(3px)", // Darken the background
-                zIndex: 10, // Ensure it's on top
-              },
-              content: {
-                width: "20%",
-                height: "65%",
-                margin:"auto",
-                borderRadius: "10px",
-                boxShadow: "1px 1px 10px gray",
-                overflow: "hidden"
-                
-              },
-            }}
-          >
-            <div className="my-3 w-full bg-red-80">
-                <h1 className="pb-3">Name</h1>
-                <input
-                  className="border rounded-md p-2 w-full"
-                  type="text"
-                  name=""
-                  id=""
-                />
-              </div>
-
-            <div className="mb-2 w-full"> 
-                <h1 className="pb-3">Email</h1>
-                <input
-                  className="border rounded-md p-2 w-full"
-                  type="email"
-                  name=""
-                  id=""
-                />
-              </div>
-            <div className=" flex flex-col gap-5">
-              <div>
-                <h1 className="pb-3">Contact Number</h1>
-                <input
-                  className="border rounded-md p-2 w-full"
-                  type="number"
-                  name=""
-                  id=""
-                />
-              </div>
-              
-            
-
-            
-              <div>
-                <h1 className="pb-3">Location</h1>
-                <input
-                  className="border rounded-md p-2 w-full"
-                  type="text"
-                  name=""
-                  id=""
-                />
-              </div>
-              
-              <button
-                type="button"
-                className="bg-blue-900 py-2 m-auto p-8 text-lg rounded-md text-white"
-              >
-                Add
-              </button>
-            </div>
-
-            <button  onClick={() =>{setIsOpen(close)}}><MdCancel className="absolute top-3 right-3 size-5 hover:text-red-800" /> </button>
-          </Model>
-
-        </div>
+          className="px-10 py-2 text-xl text-white bg-blue-900 rounded-md"
+          onClick={() => setIsOpen(true)}
+        >
+          Add
+        </button>
       </div>
-      
 
-      <div className="table-container">
-      <table className=" text-center mt-12 overflow-x-auto">
-        <tr className="bg-blue-800 text-white h-12 ">
-         
+      {/* Modal for adding a client */}
+      <Model
+        isOpen={isOpen}
+        style={{
+          overlay: { backdropFilter: "blur(3px)", zIndex: 10 },
+          content: {
+            width: "30%",
+            height: "auto",
+            margin: "auto",
+            padding: "20px",
+            borderRadius: "10px",
+            boxShadow: "1px 1px 10px gray",
+          },
+        }}
+      >
+        <button onClick={() => setIsOpen(false)}>
+          <MdCancel className="absolute top-3 right-3 size-5 hover:text-red-800" />
+        </button>
+        <h2 className="mb-4 text-xl font-bold">Add Client</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-3">
+            <label className="block pb-1">Name</label>
+            <input className="w-full p-2 border rounded-md" type="text" name="Name" value={formData.Name} onChange={handleChange} required />
+          </div>
+          <div className="mb-3">
+            <label className="block pb-1">Email</label>
+            <input className="w-full p-2 border rounded-md" type="email" name="Emial" value={formData.Emial} onChange={handleChange} required />
+          </div>
+          <div className="mb-3">
+            <label className="block pb-1">Contact Number</label>
+            <input className="w-full p-2 border rounded-md" type="text" name="Conatct_Number" value={formData.Conatct_Number} onChange={handleChange} required />
+          </div>
+          <div className="mb-3">
+            <label className="block pb-1">Location</label>
+            <input className="w-full p-2 border rounded-md" type="text" name="Location" value={formData.Location} onChange={handleChange} required />
+          </div>
+          <button type="submit" className="w-full px-5 py-2 text-white bg-blue-900 rounded-md">
+            Add Client
+          </button>
+        </form>
+      </Model>
 
-          <th className="border"> EntryCODE</th>
-          <th className="border ">LINKTRY</th>
-          <th className="border">CATCODE</th>
-          <th className="border">STYPE</th>
-          <th className="border">BUILTUP </th>
-          <th className="border">CARPET </th>
-          <th className="border">RATEBUY</th>
-          <th className="border">RATELEASE</th>
-          <th className="border">BUCRATIO</th>
-          <th className="border">FLOOR</th>
-          <th className="border">REMARKS</th>
-          <th className="border">USERID</th>
-          <th className="border">EDITDATE</th>
-        </tr>
-
-        <tr>
-          
-          <td className="py-4">Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-        </tr>
-
-        <tr>
-          
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-        </tr>
-
-        <tr>
-          
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-        </tr>
-
-        <tr>
-          
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-        </tr>
-
-        <tr>
-          
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-        </tr>
-
-        <tr>
-          
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-        </tr>
-
-        <tr>
-          
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-        </tr>
-
-        <tr>
-          
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-          <td>Cell text</td>
-        </tr>
-      </table>
+      {/* Client Table */}
+      <div className="mt-6 overflow-x-auto">
+        <table className="w-full text-center border border-gray-300">
+          <thead className="h-12 text-white bg-blue-800">
+            <tr>
+              <th className="px-4 py-2 border">ID</th>
+              <th className="px-4 py-2 border">Name</th>
+              <th className="px-4 py-2 border">Email</th>
+              <th className="px-4 py-2 border">Contact Number</th>
+              <th className="px-4 py-2 border">Location</th>
+            </tr>
+          </thead>
+          <tbody>
+            {clients.length > 0 ? (
+              clients.map((client) => (
+                <tr key={client.client_id} className="border">
+                  <td className="px-4 py-2 border">{client.client_id}</td>
+                  <td className="px-4 py-2 border">{client.Name}</td>
+                  <td className="px-4 py-2 border">{client.Emial}</td>
+                  <td className="px-4 py-2 border">{client.Conatct_Number}</td>
+                  <td className="px-4 py-2 border">{client.Location}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="5" className="py-4 text-gray-500">No clients found</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
     </div>
   );
