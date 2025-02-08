@@ -42,7 +42,7 @@ const App = ({ showSidebar }) => {
       <div className={`flex h-screen ${showSidebar ? "flex " : ""}`}>
         {/* Sidebar displayed conditionally */}
         {showSidebar && <Sidebar />}
-        <div className={`flex-grow w-[80%] ${showSidebar ? "ml-64" : ""}`}>
+        <div className={`flex-grow w-[80%] ${showSidebar ? "ml-64" : "ml-0"}`}>
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Login />} />
