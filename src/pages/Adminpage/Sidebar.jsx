@@ -29,7 +29,9 @@ const SidebarItem = ({
       src={isActive || isHovered ? activeIcon : icon}
       alt={`${label} Icon`}
     />
-    {isSidebarOpen && <span className={isActive ? "text-black" : ""}>{label}</span>}
+    {isSidebarOpen && (
+      <span className={isActive ? "text-black" : ""}>{label}</span>
+    )}
   </Link>
 );
 
@@ -45,10 +47,10 @@ const Sidebar = () => {
     const updateDate = () => {
       const now = new Date();
       const formattedDate = new Intl.DateTimeFormat("en-GB", {
-        weekday: "short",  // Mon
-        day: "2-digit",    // 10
-        month: "short",    // Feb
-        year: "numeric",   // 2025
+        weekday: "short", // Mon
+        day: "2-digit", // 10
+        month: "short", // Feb
+        year: "numeric", // 2025
       }).format(now);
 
       setCurrentDate(formattedDate);
@@ -92,14 +94,41 @@ const Sidebar = () => {
           )}
           <button
             onClick={handleToggle}
-            className={`absolute ${isSidebarOpen ? "right-[-28px]" : "right-[-28px]"} top-1/2 -translate-y-1/2`}
+            className={`absolute ${
+              isSidebarOpen ? "right-[-32px]" : "right-[-32px]"
+            } top-1/2 -translate-y-1/2`}
             aria-label="Toggle Sidebar"
           >
-            <img
-              src="https://img.icons8.com/?size=100&id=Rdp3AydLFY2A&format=png&color=000000"
-              className="w-6 h-6"
-              alt="Toggle"
-            />
+            {isSidebarOpen ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="30"
+                height="30"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  fill="none"
+                  stroke="#1e3a8a"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.5"
+                  d="m11.25 4.75l-6.5 6.5m0-6.5l6.5 6.5"
+                />
+              </svg>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width={30}
+                height={30}
+                viewBox="0 0 24 24"
+              >
+                <path
+                  fill="#1e3a8a"
+                  fillRule="evenodd"
+                  d="M3 16h18v2H3zm0-5h18v2H3zm0-5h18v2H3z"
+                ></path>
+              </svg>
+            )}
           </button>
         </div>
       </div>

@@ -32,24 +32,31 @@ const Property = () => {
             area.properties.flatMap((property) =>
               property.property_details.map((detail) => ({
                 project_name: property.project_name || "-",
+                Pincode: property.pin || "-",
+                company: property.company || "-",
                 building: property.building || "-",
                 address: property.address2 || "-",
                 property_type: property.property_type || "-",
                 status_code: property.status_code || "-",
                 lease_type: property.lease_type || "-",
                 floor: detail.floor || "-",
+                wing: detail.wing || "-",
+                car_parking: detail.car_parking || "-",
                 unit_no: detail.unit_no || "-",
                 rate_buy: detail.rate_buy || "-",
                 rate_lease: detail.rate_lease || "-",
+                builtup: detail.builtup || "-",
+                carpet: detail.carpet || "-",
                 remarks: detail.remarks || "-",
                 area_name: area.area_name || "-",
                 city_name: city.city_name || "-",
+                c_status: property. c_status|| "-",
                 contact_person: detail.contacts?.[0]?.contact_person || "-",
                 email: detail.contacts?.[0]?.email || "-",
                 mobile: detail.contacts?.[0]?.mobile || "-",
                 contact_person_address:
                   detail.contacts?.[0]?.contact_person_address || "-",
-                company: property.company || "-",
+                // company: property.company || "-",
                 description: property.description || "-",
                 pin_code: property.pin || "-",
                 usp: property.usp || "-",
@@ -73,26 +80,29 @@ const Property = () => {
       String(value).toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
-  console.log(filteredProperties);
+  // console.log(filteredProperties);
 
   const showContactDetails = (property) => {
-    console.log(property);
+   
+  
     Swal.fire({
-      title: `<h2 style="color: #2c3e50; font-weight: 600;">${property.project_name} - Details</h2>`,
+      title: `<h2 style="color: #2c3e50; font-weight: 600; margin-bottom: 10px;">${property.project_name} - Details</h2>`,
       html: `
         <div style="text-align: left; font-size: 16px; color: #2c3e50; line-height: 1.6;">
           <p><strong>Company:</strong> ${property.company}</p>
-          <p><strong>Description:</strong> ${property.description}</p>
-          <p><strong>Pin Code:</strong> ${property.pin_code}</p>
-          <p><strong>Status:</strong> ${property.status_code}</p>
-          <p><strong>USP:</strong> ${property.usp}</p>
+          <p><strong>Remarks:</strong> ${property.remarks}</p>
+          <p><strong>Floor:</strong> ${property.floor}</p>
+          <p><strong>Unit NO.:</strong> ${property.unit_no}</p>
+          <p><strong>Wing:</strong> ${property.wing}</p>
+          <p><strong>Car Parking:</strong> ${property.car_parking}</p>
+          <p><strong>Builtup Area:</strong> ${property.builtup}</p>
+          <p><strong>Carpet Area:</strong> ${property.carpet}</p>
           <hr style="border-top: 1px solid #dcdcdc; margin: 10px 0;"/>
           <p><strong>Contact Person:</strong> ${property.contact_person}</p>
           <p><strong>Email:</strong> <a href="mailto:${property.email}" style="color: #2c3e50; text-decoration: none;">${property.email}</a></p>
           <p><strong>Mobile:</strong> <a href="tel:${property.mobile}" style="color: #2c3e50; text-decoration: none;">${property.mobile}</a></p>
           <p><strong>Address:</strong> ${property.contact_person_address}</p>
         </div>`,
-
       confirmButtonText: "Close",
       width: "500px",
       background: "#ffffff",
@@ -103,6 +113,7 @@ const Property = () => {
         popup: "animate__animated animate__fadeOutUp",
       },
     });
+    
   };
 
   return (
@@ -150,15 +161,21 @@ const Property = () => {
                 <tr className="h-12 text-white bg-blue-800">
                   <th className="px-4 border">Project Name</th>
                   <th className="px-4 border">Building</th>
+                  <th className="px-4 border">Address1</th>
                   <th className="px-4 border">City</th>
                   <th className="px-4 border">Area</th>
                   <th className="px-4 border">Property Type</th>
+                  <th className="px-4 border">lease_type</th>
+                  <th className="px-4 border"> c_status</th>
+                  <th className="px-4 border"> contact_person</th>
+                  <th className="px-4 border">Buy rate</th>
+                  <th className="px-4 border">lease rate</th>
+                  <th className="px-4 border">Company</th>
+                  <th className="px-4 border">Description</th>
+                  <th className="px-4 border">Pincode</th>
+                  <th className="px-4 border">USP</th>
                   <th className="px-4 border">Status</th>
-                  <th className="px-4 border">Floor</th>
-                  <th className="px-4 border">Unit</th>
-                  <th className="px-4 border">Buy Rate</th>
-                  <th className="px-4 border">Lease Rate</th>
-                  <th className="px-4 border">Remarks</th>
+                
                 </tr>
               </thead>
               <tbody>
@@ -177,15 +194,20 @@ const Property = () => {
       >
         <td className="px-4 py-2 border text-wrap">{property.project_name}</td>
         <td className="px-4 py-2 border text-wrap">{property.building}</td>
+        <td className="px-4 py-2 border text-wrap">{property.address}</td>
         <td className="px-4 py-2 border text-wrap">{property.city_name}</td>
         <td className="px-4 py-2 border text-wrap">{property.area_name}</td>
         <td className="px-4 py-2 border text-wrap">{property.property_type}</td>
-        <td className="px-4 py-2 border text-wrap">{property.status_code}</td>
-        <td className="px-4 py-2 border text-wrap">{property.floor}</td>
-        <td className="px-4 py-2 border text-wrap">{property.unit_no}</td>
+        <td className="px-4 py-2 border text-wrap">{property.lease_type}</td>
+        <td className="px-4 py-2 border text-wrap">{property.c_status}</td>
+        <td className="px-4 py-2 border text-wrap">{property.contact_person}</td>
         <td className="px-4 py-2 border text-wrap">{property.rate_buy}</td>
         <td className="px-4 py-2 border text-wrap">{property.rate_lease}</td>
-        <td className="px-4 py-2 border text-wrap">{property.remarks}</td>
+        <td className="px-4 py-2 border text-wrap">{property.company}</td>
+        <td className="px-4 py-2 border text-wrap">{property.description}</td>
+        <td className="px-4 py-2 border text-wrap">{property.pin_code}</td>
+        <td className="px-4 py-2 border text-wrap">{property.usp}</td>
+        <td className="px-4 py-2 border text-wrap">{property.status_code}</td>
       </tr>
     ))
   )}

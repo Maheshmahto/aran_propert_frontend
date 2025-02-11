@@ -1,17 +1,46 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Slider from "@mui/material/Slider";
 import { Box } from "@mui/material";
 import { useLogin } from "../../hooks/LoginContext";
 
-const UserSidebar = () => {
+const UserSidebar = ({ properties = [], setFilteredPropertiesSidebar }) => {
   const MIN_PRICE = 100;
   const MAX_PRICE = 10000;
   const [priceRange, setPriceRange] = useState([MIN_PRICE, MAX_PRICE]);
   const [anyPrice, setAnyPrice] = useState(false);
-  const [isOpen, setIsOpen] = useState(true);
   const { logout } = useLogin();
+  const [selectedCity, setSelectedCity] = useState("");
+  const [selectedPropertyTypes, setSelectedPropertyTypes] = useState([]);
   const [currentDate, setCurrentDate] = useState("");
+
+  const handleLogOut = () => {
+    logout();
+  };
+
+  const handlePriceChange = (event, newValue) => {
+    setPriceRange(newValue);
+  };
+
+  const handleCheckboxChange = (propertyType) => {
+    setSelectedPropertyTypes(
+      (prev) =>
+        prev.includes(propertyType)
+          ? prev.filter((type) => type !== propertyType) // Remove if already selected
+          : [...prev, propertyType] // Add if not selected
+    );
+  };
+
+  useEffect(() => {
+    // Apply filtering based on selected property types
+    if (selectedPropertyTypes.length === 0) {
+      setFilteredPropertiesSidebar(properties); // Show all if nothing is selected
+    } else {
+      const filtered = properties.filter((property) =>
+        selectedPropertyTypes.includes(property.property_type)
+      );
+      setFilteredPropertiesSidebar(filtered);
+    }
+  }, [selectedPropertyTypes, properties]);
 
   useEffect(() => {
     const updateDate = () => {
@@ -32,51 +61,9 @@ const UserSidebar = () => {
     return () => clearInterval(interval); // Cleanup on unmount
   }, []);
 
-  const handlePriceChange = (event, newValue) => {
-    setPriceRange(newValue);
-  };
-
-  const handleAnyPriceChange = (e) => {
-    setAnyPrice(e.target.checked);
-    if (e.target.checked) {
-      setPriceRange([MIN_PRICE, MAX_PRICE]);
-    }
-  };
-
-  const toggleSidebar = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const handleLogOut = () => {
-    logout();
-  };
-
   return (
-    <div
-      className={`flex ${
-        isOpen ? "w-[22%]" : "w-0"
-      } transition-all duration-300`}
-    >
-      {/* Arrow Button */}
-      {/* <button
-                    onClick={toggleSidebar}
-                    className={`absolute  w-[1.5%] h-[1.5%] text-white transition-all`}
-                >
-                   <img src="/211688_forward_arrow_icon.webp" alt="" />
-                </button> */}
-
-      <aside
-        className={`p-8 w-full bg-white border-r border-gray-300 shadow-lg overflow-hidden ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        } transition-transform duration-300`}
-      >
-        {/* <button
-                    onClick={toggleSidebar}
-                    className={`absolute top-2 right-2 w-[7.5%] h-[7.5%]  text-white transition-all`}
-                >
-                    <img src="/352467_arrow_left_icon.webp" alt="close-btn" />
-                </button> */}
-
+    <div className="flex w-[22%] transition-all duration-300">
+      <aside className="w-full p-[20px] bg-white border-r shadow-lg">
         <div className="flex items-center justify-center gap-4">
           <img
             src="/LeftColumn/Logo.png"
@@ -89,66 +76,92 @@ const UserSidebar = () => {
           </div>
         </div>
         <h2 className="m-4 font-bold">Filter</h2>
+
+        {/* City Filter */}
         <div>
-          <label className="block mb-2 font-medium text-gray-500">City</label>
-          <select className="border border-gray-300 rounded p-2 w-[80%]">
-            <option>Mumbai</option>
+          <label className="block mb-2 text-gray-500">City</label>
+          <select
+            className="border rounded p-2 w-[80%]"
+            onChange={(e) => setSelectedCity(e.target.value)}
+          >
+            <option value="">All Cities</option>
+            {[...new Set(properties?.map((p) => p.city_name) || [])].map(
+              (city, index) => (
+                <option key={index} value={city}>
+                  {city}
+                </option>
+              )
+            )}
           </select>
         </div>
-        <div className="mt-4">
-          <label className="block mb-2 font-medium text-gray-500">
-            Property Type
-          </label>
+
+        {/* Property Type Filter */}
+        <div className="p-4">
+          <h2 className="mb-4 text-lg font-bold">Filter by Property Type</h2>
           <div className="grid grid-cols-2 gap-3">
             <label className="flex items-center gap-2">
               <input
                 type="checkbox"
-                name="propertyType"
-                className="w-4 h-4 text-blue-500"
+                value="RES1"
+                onChange={() => handleCheckboxChange("RES1")}
+                checked={selectedPropertyTypes.includes("RES1")}
               />
-              <span>All Properties</span>
+              <span className="mx-2">(RES1)</span>
             </label>
             <label className="flex items-center gap-2">
-              <input type="checkbox" className="w-4 h-4 text-blue-500" />
-              <span>Commercial</span>
+              <input
+                type="checkbox"
+                value="RES2"
+                onChange={() => handleCheckboxChange("RES2")}
+                checked={selectedPropertyTypes.includes("RES2")}
+              />
+              <span className="mx-2">(RES2)</span>
             </label>
             <label className="flex items-center gap-2">
-              <input type="checkbox" className="w-4 h-4 text-blue-500" />
-              <span>Retail/Showroom</span>
+              <input
+                type="checkbox"
+                value="Commercial"
+                onChange={() => handleCheckboxChange("Commercial")}
+                checked={selectedPropertyTypes.includes("Commercial")}
+              />
+              <span className="mx-2">Commercial</span>
             </label>
             <label className="flex items-center gap-2">
-              <input type="checkbox" className="w-4 h-4 text-blue-500" />
-              <span>Land/Plot</span>
+              <input
+                type="checkbox"
+                value="Retail"
+                onChange={() => handleCheckboxChange("Retail")}
+                checked={selectedPropertyTypes.includes("Retail")}
+              />
+              <span className="mx-2">Retail</span>
             </label>
             <label className="flex items-center gap-2">
-              <input type="checkbox" className="w-4 h-4 text-blue-500" />
-              <span>Industrial</span>
+              <input
+                type="checkbox"
+                value="Plot"
+                onChange={() => handleCheckboxChange("Plot")}
+                checked={selectedPropertyTypes.includes("Plot")}
+              />
+              <span className="mx-2">Plot</span>
             </label>
             <label className="flex items-center gap-2">
-              <input type="checkbox" className="w-4 h-4 text-blue-500" />
-              <span>Warehouse</span>
+              <input
+                type="checkbox"
+                value="Industrial"
+                onChange={() => handleCheckboxChange("Industrial")}
+                checked={selectedPropertyTypes.includes("Industrial")}
+              />
+              <span className="mx-2">Industrial</span>
             </label>
             <label className="flex items-center gap-2">
-              <input type="checkbox" className="w-4 h-4 text-blue-500" />
-              <span>IT/ITES Properties</span>
+              <input
+                type="checkbox"
+                value="Warehouse"
+                onChange={() => handleCheckboxChange("Warehouse")}
+                checked={selectedPropertyTypes.includes("Warehouse")}
+              />
+              <span className="mx-2">Warehouse</span>
             </label>
-            <label className="flex items-center gap-2">
-              <input type="checkbox" className="w-4 h-4 text-blue-500" />
-              <span>Pre Leased Properties</span>
-            </label>
-            <label className="flex items-center gap-2">
-              <input type="checkbox" className="w-4 h-4 text-blue-500" />
-              <span>Coworking Spaces</span>
-            </label>
-            <label className="flex items-center gap-2">
-              <input type="checkbox" className="w-4 h-4 text-blue-500" />
-              <span>Residential</span>
-            </label>
-            <div className="mt-2">
-              <label className="block font-medium text-gray-500 ">
-                Price Range
-              </label>
-            </div>
           </div>
         </div>
 
