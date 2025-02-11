@@ -3,9 +3,10 @@ import PropertyTypeDropdown from "./PropertyTypeDropdown";
 import ReopenDateDropdown from "./ReopenDateDropdown";
 import { MdCancel } from "react-icons/md";
 import axios from "../helper/axios";
+import Swal from "sweetalert2";
 
 const PropertyForm = ({ setShowPropertyForm }) => {
-  const tabs = ["addProperty", "areaDetails", "contact"];
+  const tabs = ["AddProperty", "AreaDetails", "Contact"];
   const [activeTab, setActiveTab] = useState(0);
   const token = localStorage.getItem("token");
   const [formData, setFormData] = useState({
@@ -116,16 +117,30 @@ const PropertyForm = ({ setShowPropertyForm }) => {
         }
       });
 
-      if (response.status === 200) {
-        console.log('Success:', response.data);
-        setShowPropertyForm(false);
-      } else {
-        throw new Error('Failed to submit property details');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
+      if (response?.data) {
+             await Swal.fire({
+                icon: "success",
+                title: "Property data added successfully",
+                text: "Redirecting...",
+                timer: 2000, // Auto close after 2 seconds
+                timerProgressBar: true,
+                showConfirmButton: false,
+              }).then(() => {
+                window.location.reload();
+                setShowPropertyForm(false);
+              });
+            }
+          } catch (error) {
+            console.error(error?.response?.data?.detail);
+        
+            Swal.fire({
+              icon: "error",
+              title: "Property not added",
+              text: error.response?.data?.detail || "An error occurred. Please try again.",
+            });
+          }
+        };
+        
 
   return (
     <div className="relative p-8 mx-auto mt-16 bg-white border rounded-lg shadow-inner shadow-black">

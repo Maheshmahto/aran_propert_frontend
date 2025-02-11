@@ -2,7 +2,8 @@ import axios from "axios";
 
 // Set the baseURL dynamically using an environment variable or a default value
 const ApiAxios= axios.create({
-  baseURL: "https://fae2-2405-201-37-21d9-7042-bfc5-ac0-6d3.ngrok-free.app/", // Use environment variable if available
+  baseURL: "https://7d54-2405-201-37-21d9-614e-febb-754e-5558.ngrok-free.app/", 
+  // baseURL: "http://127.0.0.1:8000", // Use environment variable if available
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",

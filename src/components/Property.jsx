@@ -17,58 +17,59 @@ const Property = () => {
 
   const fetchProperties = async () => {
     try {
-      const response = await axios.get('/api/get_all_property_hierarchy/', {
+      const response = await axios.get("/api/get_all_property_hierarchy/", {
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       });
-      console.log(response.data)
-      if (!response.data) throw new Error('No data received');
-      
-      const flattenedProperties = response.data.flatMap(city => 
-        city.sublocations.flatMap(sublocation =>
-          sublocation.areas.flatMap(area =>
-            area.properties.flatMap(property =>
-              property.property_details.map(detail => ({
-                project_name: property.project_name || '-',
-                building: property.building || '-',
-                address: property.address2 || '-',
-                property_type: property.property_type || '-',
-                status_code: property.status_code || '-',
-                lease_type: property.lease_type || '-',
-                floor: detail.floor || '-',
-                unit_no: detail.unit_no || '-',
-                rate_buy: detail.rate_buy || '-',
-                rate_lease: detail.rate_lease || '-',
-                remarks: detail.remarks || '-',
-                area_name: area.area_name || '-',
-                city_name: city.city_name || '-',
-                contact_person: detail.contacts?.[0]?.contact_person || '-',
-                email: detail.contacts?.[0]?.email || '-',
-                mobile: detail.contacts?.[0]?.mobile || '-',
-                contact_person_address: detail.contacts?.[0]?.contact_person_address || '-',
-                company: property.company || '-',
-                description: property.description || '-',
-                pin_code: property.pin || '-',
-                usp: property.usp || '-'
+      console.log(response.data);
+      if (!response.data) throw new Error("No data received");
+
+      const flattenedProperties = response.data.flatMap((city) =>
+        city.sublocations.flatMap((sublocation) =>
+          sublocation.areas.flatMap((area) =>
+            area.properties.flatMap((property) =>
+              property.property_details.map((detail) => ({
+                project_name: property.project_name || "-",
+                building: property.building || "-",
+                address: property.address2 || "-",
+                property_type: property.property_type || "-",
+                status_code: property.status_code || "-",
+                lease_type: property.lease_type || "-",
+                floor: detail.floor || "-",
+                unit_no: detail.unit_no || "-",
+                rate_buy: detail.rate_buy || "-",
+                rate_lease: detail.rate_lease || "-",
+                remarks: detail.remarks || "-",
+                area_name: area.area_name || "-",
+                city_name: city.city_name || "-",
+                contact_person: detail.contacts?.[0]?.contact_person || "-",
+                email: detail.contacts?.[0]?.email || "-",
+                mobile: detail.contacts?.[0]?.mobile || "-",
+                contact_person_address:
+                  detail.contacts?.[0]?.contact_person_address || "-",
+                company: property.company || "-",
+                description: property.description || "-",
+                pin_code: property.pin || "-",
+                usp: property.usp || "-",
               }))
             )
           )
         )
       );
-      
+
       setProperties(flattenedProperties);
       setLoading(false);
     } catch (err) {
-      console.error('Error fetching properties:', err);
-      setError(err.message || 'Failed to fetch properties');
+      console.error("Error fetching properties:", err);
+      setError(err.message || "Failed to fetch properties");
       setLoading(false);
     }
   };
 
-  const filteredProperties = properties.filter(property =>
-    Object.values(property).some(value =>
+  const filteredProperties = properties.filter((property) =>
+    Object.values(property).some((value) =>
       String(value).toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
@@ -91,31 +92,32 @@ const Property = () => {
           <p><strong>Mobile:</strong> <a href="tel:${property.mobile}" style="color: #2c3e50; text-decoration: none;">${property.mobile}</a></p>
           <p><strong>Address:</strong> ${property.contact_person_address}</p>
         </div>`,
-      
-      confirmButtonText: 'Close',
-      width: '500px',
-      background: '#ffffff',
+
+      confirmButtonText: "Close",
+      width: "500px",
+      background: "#ffffff",
       showClass: {
-        popup: 'animate__animated animate__fadeInDown'
+        popup: "animate__animated animate__fadeInDown",
       },
       hideClass: {
-        popup: 'animate__animated animate__fadeOutUp'
-      }
+        popup: "animate__animated animate__fadeOutUp",
+      },
     });
   };
 
-
-  
-
   return (
-    <div className="mx-10 my-24">
+    <div className="pb-20 mx-10 my-24">
       <div className="flex justify-between h-10">
-        <div className="flex items-center gap-4 px-4 border border-gray-300 rounded-md py-7">
-          <img className="object-none" src="/LeftColumn/search-normal.png" alt="search" />
-          <input 
-            className="outline-none" 
-            type="text" 
-            placeholder="Search" 
+        <div className="flex gap-4 items-center border border-gray-300 rounded-md w-[30%] px-4 py-2">
+          <img
+            className="object-none"
+            src="/LeftColumn/search-normal.png"
+            alt="search"
+          />
+          <input
+            className="w-full outline-none"
+            type="text"
+            placeholder="Search"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -132,13 +134,14 @@ const Property = () => {
       </div>
 
       {showPropertyForm ? (
-        <PropertyForm setShowPropertyForm={setShowPropertyForm} onSubmit={fetchProperties} />
+        <PropertyForm
+          setShowPropertyForm={setShowPropertyForm}
+          onSubmit={fetchProperties}
+        />
       ) : (
         <div className="overflow-x-auto">
           {loading ? (
             <div className="mt-8 text-center">Loading properties...</div>
-          ) : error ? (
-            <div className="mt-8 text-center text-red-500">{error}</div>
           ) : filteredProperties.length === 0 ? (
             <div className="mt-8 text-center">No properties found</div>
           ) : (
@@ -159,21 +162,33 @@ const Property = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredProperties.map((property, index) => (
-                  <tr key={index} className="cursor-pointer hover:bg-gray-50" onClick={() => showContactDetails(property)}>
-                    <td className="px-4 py-2 border text-wrap">{property.project_name}</td>
-                    <td className="px-4 py-2 border text-wrap">{property.building}</td>
-                    <td className="px-4 py-2 border text-wrap">{property.city_name}</td>
-                    <td className="px-4 py-2 border text-wrap">{property.area_name}</td>
-                    <td className="px-4 py-2 border text-wrap">{property.property_type}</td>
-                    <td className="px-4 py-2 border text-wrap">{property.status_code}</td>
-                    <td className="px-4 py-2 border text-wrap">{property.floor}</td>
-                    <td className="px-4 py-2 border text-wrap">{property.unit_no}</td>
-                    <td className="px-4 py-2 border text-wrap">{property.rate_buy}</td>
-                    <td className="px-4 py-2 border text-wrap">{property.rate_lease}</td>
-                    <td className="px-4 py-2 border text-wrap">{property.remarks}</td>
-                  </tr>
-                ))}
+              {filteredProperties.length === 0 ? (
+    <tr>
+      <td colSpan="11" className="py-4 text-center">
+        <h3>No properties are there</h3>
+      </td>
+    </tr>
+  ) : (
+    filteredProperties.map((property, index) => (
+      <tr
+        key={index}
+        className="cursor-pointer hover:bg-gray-50"
+        onClick={() => showContactDetails(property)}
+      >
+        <td className="px-4 py-2 border text-wrap">{property.project_name}</td>
+        <td className="px-4 py-2 border text-wrap">{property.building}</td>
+        <td className="px-4 py-2 border text-wrap">{property.city_name}</td>
+        <td className="px-4 py-2 border text-wrap">{property.area_name}</td>
+        <td className="px-4 py-2 border text-wrap">{property.property_type}</td>
+        <td className="px-4 py-2 border text-wrap">{property.status_code}</td>
+        <td className="px-4 py-2 border text-wrap">{property.floor}</td>
+        <td className="px-4 py-2 border text-wrap">{property.unit_no}</td>
+        <td className="px-4 py-2 border text-wrap">{property.rate_buy}</td>
+        <td className="px-4 py-2 border text-wrap">{property.rate_lease}</td>
+        <td className="px-4 py-2 border text-wrap">{property.remarks}</td>
+      </tr>
+    ))
+  )}
               </tbody>
             </table>
           )}

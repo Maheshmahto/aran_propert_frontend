@@ -2,7 +2,7 @@ import "react";
 
 const Access = () => {
   return (
-    <div className="mx-10 my-48">
+    <div className="mx-10 my-24">
       <div className="flex justify-between h-10 ">
         <div className="flex gap-4 border border-gray-400 w-[30%] px-4 py-7 items-center ">
           <img

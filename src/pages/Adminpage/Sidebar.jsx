@@ -39,6 +39,26 @@ const Sidebar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [selected, setSelected] = useState(1);
   const [hovered, setHovered] = useState(null);
+  const [currentDate, setCurrentDate] = useState("");
+
+  useEffect(() => {
+    const updateDate = () => {
+      const now = new Date();
+      const formattedDate = new Intl.DateTimeFormat("en-GB", {
+        weekday: "short",  // Mon
+        day: "2-digit",    // 10
+        month: "short",    // Feb
+        year: "numeric",   // 2025
+      }).format(now);
+
+      setCurrentDate(formattedDate);
+    };
+
+    updateDate(); // Set initial date
+    const interval = setInterval(updateDate, 1000); // Update every second
+
+    return () => clearInterval(interval); // Cleanup on unmount
+  }, []);
 
   const handleToggle = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -67,7 +87,7 @@ const Sidebar = () => {
           {isSidebarOpen && (
             <div className="flex flex-col gap-1">
               <h1 className="font-semibold text-md">Welcome, Aryan</h1>
-              <p className="text-sm text-gray-600">Mon, 20 Jan 2025</p>
+              <p className="text-sm text-gray-600">{currentDate}</p>
             </div>
           )}
           <button
