@@ -233,10 +233,10 @@ const UserSidebar = ({ properties = [], setFilteredPropertiesSidebar }) => {
           </div>
         </div>
         <div className="flex justify-center gap-10 py-3 mt-4">
-          <button className="text-red-600 ">Cancel</button>
-          <button className="px-4 py-3 text-white bg-blue-500 rounded hover:bg-blue-700">
+          {/* <button className="px-4 py-2 text-white bg-red-600 rounded-md hover:bg-red-700">Cancel</button>
+          <button className="px-4 py-3 text-white bg-blue-900 rounded-md hover:bg-blue-800">
             Apply filters
-          </button>
+          </button> */}
         </div>
         <div className="flex items-center justify-center my-3 space-x-4">
           <button

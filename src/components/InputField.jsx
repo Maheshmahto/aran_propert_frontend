@@ -17,7 +17,7 @@ const InputField = () => {
               onClick={() => {
                 setIsOpen(true);
               }}
-              className="px-10 py-2 text-xl text-white bg-blue-900 rounded-md shadow-md "
+              className="px-10 py-2 text-xl text-white bg-blue-900 rounded-md hover:bg-blue-800"
             >
               Add
             </button>

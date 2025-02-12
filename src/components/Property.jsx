@@ -50,7 +50,7 @@ const Property = () => {
                 remarks: detail.remarks || "-",
                 area_name: area.area_name || "-",
                 city_name: city.city_name || "-",
-                c_status: property. c_status|| "-",
+                c_status: property.c_status || "-",
                 contact_person: detail.contacts?.[0]?.contact_person || "-",
                 email: detail.contacts?.[0]?.email || "-",
                 mobile: detail.contacts?.[0]?.mobile || "-",
@@ -83,8 +83,6 @@ const Property = () => {
   // console.log(filteredProperties);
 
   const showContactDetails = (property) => {
-   
-  
     Swal.fire({
       title: `<h2 style="color: #2c3e50; font-weight: 600; margin-bottom: 10px;">${property.project_name} - Details</h2>`,
       html: `
@@ -113,7 +111,6 @@ const Property = () => {
         popup: "animate__animated animate__fadeOutUp",
       },
     });
-    
   };
 
   return (
@@ -136,7 +133,7 @@ const Property = () => {
         <div>
           <button
             type="button"
-            className="px-10 py-2 text-xl text-white bg-blue-900 rounded-md"
+            className="px-10 py-2 text-xl text-white bg-blue-900 rounded-md hover:bg-blue-800"
             onClick={() => setShowPropertyForm(true)}
           >
             Add
@@ -175,42 +172,73 @@ const Property = () => {
                   <th className="px-4 border">Pincode</th>
                   <th className="px-4 border">USP</th>
                   <th className="px-4 border">Status</th>
-                
                 </tr>
               </thead>
               <tbody>
-              {filteredProperties.length === 0 ? (
-    <tr>
-      <td colSpan="11" className="py-4 text-center">
-        <h3>No properties are there</h3>
-      </td>
-    </tr>
-  ) : (
-    filteredProperties.map((property, index) => (
-      <tr
-        key={index}
-        className="cursor-pointer hover:bg-gray-50"
-        onClick={() => showContactDetails(property)}
-      >
-        <td className="px-4 py-2 border text-wrap">{property.project_name}</td>
-        <td className="px-4 py-2 border text-wrap">{property.building}</td>
-        <td className="px-4 py-2 border text-wrap">{property.address}</td>
-        <td className="px-4 py-2 border text-wrap">{property.city_name}</td>
-        <td className="px-4 py-2 border text-wrap">{property.area_name}</td>
-        <td className="px-4 py-2 border text-wrap">{property.property_type}</td>
-        <td className="px-4 py-2 border text-wrap">{property.lease_type}</td>
-        <td className="px-4 py-2 border text-wrap">{property.c_status}</td>
-        <td className="px-4 py-2 border text-wrap">{property.contact_person}</td>
-        <td className="px-4 py-2 border text-wrap">{property.rate_buy}</td>
-        <td className="px-4 py-2 border text-wrap">{property.rate_lease}</td>
-        <td className="px-4 py-2 border text-wrap">{property.company}</td>
-        <td className="px-4 py-2 border text-wrap">{property.description}</td>
-        <td className="px-4 py-2 border text-wrap">{property.pin_code}</td>
-        <td className="px-4 py-2 border text-wrap">{property.usp}</td>
-        <td className="px-4 py-2 border text-wrap">{property.status_code}</td>
-      </tr>
-    ))
-  )}
+                {filteredProperties.length === 0 ? (
+                  <tr>
+                    <td colSpan="11" className="py-4 text-center">
+                      <h3>No properties are there</h3>
+                    </td>
+                  </tr>
+                ) : (
+                  filteredProperties.map((property, index) => (
+                    <tr
+                      key={index}
+                      className="cursor-pointer hover:bg-gray-50"
+                      onClick={() => showContactDetails(property)}
+                    >
+                      <td className="px-4 py-2 border text-wrap">
+                        {property.project_name}
+                      </td>
+                      <td className="px-4 py-2 border text-wrap">
+                        {property.building}
+                      </td>
+                      <td className="px-4 py-2 border text-wrap">
+                        {property.address}
+                      </td>
+                      <td className="px-4 py-2 border text-wrap">
+                        {property.city_name}
+                      </td>
+                      <td className="px-4 py-2 border text-wrap">
+                        {property.area_name}
+                      </td>
+                      <td className="px-4 py-2 border text-wrap">
+                        {property.property_type}
+                      </td>
+                      <td className="px-4 py-2 border text-wrap">
+                        {property.lease_type}
+                      </td>
+                      <td className="px-4 py-2 border text-wrap">
+                        {property.c_status}
+                      </td>
+                      <td className="px-4 py-2 border text-wrap">
+                        {property.contact_person}
+                      </td>
+                      <td className="px-4 py-2 border text-wrap">
+                        {property.rate_buy}
+                      </td>
+                      <td className="px-4 py-2 border text-wrap">
+                        {property.rate_lease}
+                      </td>
+                      <td className="px-4 py-2 border text-wrap">
+                        {property.company}
+                      </td>
+                      <td className="px-4 py-2 border text-wrap">
+                        {property.description}
+                      </td>
+                      <td className="px-4 py-2 border text-wrap">
+                        {property.pin_code}
+                      </td>
+                      <td className="px-4 py-2 border text-wrap">
+                        {property.usp}
+                      </td>
+                      <td className="px-4 py-2 border text-wrap">
+                        {property.status_code}
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           )}

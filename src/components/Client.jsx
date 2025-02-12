@@ -60,7 +60,11 @@ const Client = () => {
       axios
         .put(`/api/clients/${selectedClientId}`, formData)
         .then(() => {
-          Swal.fire("Updated!", "Client details updated successfully", "success");
+          Swal.fire(
+            "Updated!",
+            "Client details updated successfully",
+            "success"
+          );
           fetchClients();
           closeModal();
         })
@@ -98,7 +102,9 @@ const Client = () => {
           .delete(`/api/clients/${clientId}`)
           .then(() => {
             Swal.fire("Deleted!", "Client deleted successfully", "success");
-            const updatedClients = clients.filter((client) => client.client_id !== clientId);
+            const updatedClients = clients.filter(
+              (client) => client.client_id !== clientId
+            );
             setClients(updatedClients);
             setFilteredClients(updatedClients);
           })
@@ -130,7 +136,11 @@ const Client = () => {
       <div className="flex justify-between">
         {/* Search Input */}
         <div className="flex gap-4 items-center border border-gray-300 rounded-md w-[30%] px-4 py-2">
-        <img className="object-none" src="/LeftColumn/search-normal.png" alt="" />
+          <img
+            className="object-none"
+            src="/LeftColumn/search-normal.png"
+            alt=""
+          />
           <input
             className="w-full outline-none"
             type="text"
@@ -140,8 +150,8 @@ const Client = () => {
           />
         </div>
         <button
-        type="button"
-          className="px-10 py-2 text-xl text-white bg-blue-900 rounded-md"
+          type="button"
+          className="px-10 py-2 text-xl text-white bg-blue-900 rounded-md hover:bg-blue-800"
           onClick={() => setIsOpen(true)}
         >
           Add
@@ -166,7 +176,9 @@ const Client = () => {
         <button onClick={closeModal}>
           <MdCancel className="absolute top-3 right-3 size-5 hover:text-red-800" />
         </button>
-        <h2 className="mb-4 text-xl font-bold">{editMode ? "Edit Client" : "Add Client"}</h2>
+        <h2 className="mb-4 text-xl font-bold">
+          {editMode ? "Edit Client" : "Add Client"}
+        </h2>
         <form onSubmit={handleSubmit}>
           {["Name", "Emial", "Conatct_Number", "Location"].map((field) => (
             <div key={field} className="mb-3">
@@ -181,7 +193,10 @@ const Client = () => {
               />
             </div>
           ))}
-          <button type="submit" className="w-full px-5 py-2 text-white bg-blue-900 rounded-md">
+          <button
+            type="submit"
+            className="w-full px-5 py-2 text-white bg-blue-900 rounded-md"
+          >
             {editMode ? "Update Client" : "Add Client"}
           </button>
         </form>
@@ -209,15 +224,23 @@ const Client = () => {
                   <td className="px-4 py-2 border text-wrap">{client.Emial}</td>
                   <td className="px-4 py-2 border">{client.Conatct_Number}</td>
                   <td className="px-4 py-2 border">{client.Location}</td>
-                  <td className="flex justify-center gap-4 px-4 py-2 border">
-                    <FaEdit className="text-blue-600 cursor-pointer" onClick={() => handleEdit(client)} />
-                    <MdDelete className="text-red-600 cursor-pointer" onClick={() => handleDelete(client.client_id)} />
+                  <td className="flex justify-center gap-4 px-4 py-2">
+                    <FaEdit
+                      className="text-blue-600 cursor-pointer"
+                      onClick={() => handleEdit(client)}
+                    />
+                    <MdDelete
+                      className="text-red-600 cursor-pointer"
+                      onClick={() => handleDelete(client.client_id)}
+                    />
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="6" className="py-4 text-gray-500">No clients found</td>
+                <td colSpan="6" className="py-4 text-gray-500">
+                  No clients found
+                </td>
               </tr>
             )}
           </tbody>

@@ -30,7 +30,7 @@ const Access = () => {
         </div>
 
         <div>
-          <button className="px-8 py-2 text-xl text-white bg-blue-900 rounded-md">
+          <button className="px-10 py-2 text-xl text-white bg-blue-900 rounded-md hover:bg-blue-800">
             Save
           </button>
         </div>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "../../helper/axios";
 import Swal from "sweetalert2";
 import UserSidebar from "./UserSidebar";
+import SearchFilter from "../../components/SearchFilter";
 
 const UserDashboard = () => {
   const [showPropertyForm, setShowPropertyForm] = useState(false);
@@ -13,10 +14,17 @@ const UserDashboard = () => {
   const [filteredPropertiesSidebar, setFilteredPropertiesSidebar] = useState(
     []
   );
+  const [filter, setFilter] = useState(false);
+  const [propertyTypeShow, setPropertyTypeShow] = useState(false);
+  const [filterpropertyInput, setFilterPropertyInput] = useState("");
 
   useEffect(() => {
     fetchProperties();
   }, []);
+
+  const showFilter = () => {
+    setFilter(!filter);
+  };
 
   const fetchProperties = async () => {
     try {
@@ -129,7 +137,7 @@ const UserDashboard = () => {
       />
       <div className="pb-20 mx-10 my-24 w-[75%] overflow-y-scroll">
         <div className="flex justify-between w-full py-7">
-          <div className="w-[100%]">
+          <div className="w-[100%] flex gap-2">
             <select
               className="border border-gray-300 rounded p-3 w-[20%]"
               defaultValue="Property Type"
@@ -138,15 +146,25 @@ const UserDashboard = () => {
               <option>Commercial</option>
               <option>Office spaces</option>
             </select>
-            <select className="border border-gray-300 text-gray-400 rounded p-3 ml-6 w-[20%]">
-              <option>Location</option>
-            </select>
+            <div className="relative cursor-pointer">
+              <div onClick={showFilter}>
+                <img src="/LeftColumn/Filter.png" alt="" />
+              </div>
+              {filter && (
+                <SearchFilter
+                  propertyTypeShow={propertyTypeShow}
+                  setPropertyTypeShow={setPropertyTypeShow}
+                  filterpropertyInput={filterpropertyInput}
+                  setFilterPropertyInput={setFilterPropertyInput}
+                />
+              )}
+            </div>
           </div>
 
           <div>
             <button
               type="button"
-              className="px-10 py-2 text-xl text-white bg-blue-900 rounded-md"
+              className="px-10 py-2 text-xl text-white bg-blue-900 rounded-md hover:bg-blue-800"
               onClick={() => setShowPropertyForm(true)}
             >
               Add

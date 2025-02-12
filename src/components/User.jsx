@@ -1,29 +1,52 @@
 import { useEffect, useState } from "react";
 import axios from "../helper/axios";
-import Model from "react-modal";
-import { MdCancel } from "react-icons/md";
+import Modal from "react-modal";
+import { MdCancel,MdDelete } from "react-icons/md";
+import { FaEdit } from "react-icons/fa";
 import Swal from "sweetalert2";
 
 const User = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const closeModal = () => {
+    setIsEditOpen(false);
+    setIsAddOpen(false);
+  };
+
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isAddOpen, setIsAddOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
   const [inputData, setInputData] = useState({
-    user_email: "",
+    username: "",
+    email: "",
     phone_no: "",
-    user_password: "",
-    user_name: "",
+    user_type: "",
   });
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setInputData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get("/api/get_all_users");
+      setUsers(Array.isArray(response.data.data) ? response.data.data : []);
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Failed to fetch users. Please try again.",
+      });
+    }
+  };
+
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await axios.get("/api/get_all_users");
-        setUsers(Array.isArray(response.data.data) ? response.data.data : []);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    };
     fetchUsers();
   }, []);
 
@@ -50,7 +73,123 @@ const User = () => {
       Swal.fire({
         icon: "error",
         title: "Registration Failed",
-        text: error.response?.data?.detail || "An error occurred. Please try again.",
+        text:
+          error.response?.data?.detail ||
+          "An error occurred. Please try again.",
+      });
+    }
+  };
+
+  const handleAddUser = async () => {
+    if (
+      !inputData.username ||
+      !inputData.email ||
+      !inputData.phone_no ||
+      !inputData.user_type
+    ) {
+      Swal.fire({
+        icon: "error",
+        title: "Invalid Data",
+        text: "Please fill all required fields",
+      });
+      return;
+    }
+
+    try {
+      await CreatenewUser();
+      setIsAddOpen(false);
+      setInputData({
+        username: "",
+        email: "",
+        phone_no: "",
+        user_type: "",
+      });
+    } catch (error) {
+      console.error("Error adding user:", error);
+    }
+  };
+
+  const handleDelete = async (userId) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "This action cannot be undone!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .delete(`/api/delete/AriyanspropertiesUser/${userId}`)
+          .then(() => {
+            Swal.fire("Deleted!", "Client deleted successfully", "success");
+            const updatedUser = users.filter((user) => user.user_id !== userId);
+            setUsers(updatedUser);
+          })
+          .catch(() => {
+            Swal.fire("Error!", "Failed to delete client", "error");
+          });
+      }
+    });
+  };
+
+  const handleEdit = (user) => {
+    setIsEditOpen(true);
+    setSelectedUser(user);
+  };
+
+  const handleUpdateUser = async () => {
+    if (!selectedUser?.user_id || !selectedUser?.user_type) {
+      Swal.fire({
+        icon: "error",
+        title: "Invalid Data",
+        text: "User ID and type are required",
+      });
+      return;
+    }
+
+    try {
+      // Get the token from localStorage
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        Swal.fire({
+          icon: "error",
+          title: "Authentication Error",
+          text: "Please login again",
+        });
+        return;
+      }
+
+      const response = await axios.put(
+        `/api/update_user_type?user_id=${selectedUser.user_id}&user_type=${selectedUser.user_type}`,
+        {}, // Empty body since we're using query parameters
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response?.data) {
+        await Swal.fire(
+          "Updated!",
+          "Client details updated successfully",
+          "success"
+        );
+        await fetchUsers();
+        closeModal();
+      }
+    } catch (error) {
+      console.error("Update error:", error);
+      Swal.fire({
+        icon: "error",
+        title: "User Update Failed",
+        text:
+          error.response?.data?.message ||
+          "An error occurred. Please try again.",
       });
     }
   };
@@ -63,7 +202,11 @@ const User = () => {
     <div className="pb-20 mx-10 my-24">
       <div className="flex justify-between ">
         <div className="flex gap-4 items-center border border-gray-300 rounded-md w-[30%] px-4 py-2">
-          <img className="object-none" src="/LeftColumn/search-normal.png" alt="" />
+          <img
+            className="object-none"
+            src="/LeftColumn/search-normal.png"
+            alt=""
+          />
           <input
             className="w-full outline-none"
             type="text"
@@ -73,8 +216,8 @@ const User = () => {
           />
         </div>
         <button
-          className="px-10 py-2 text-xl text-white bg-blue-900 rounded-md"
-          onClick={() => setIsOpen(true)}
+          className="px-10 py-2 text-xl text-white bg-blue-900 rounded-md hover:bg-blue-800"
+          onClick={() => setIsAddOpen(true)}
         >
           Add
         </button>
@@ -100,12 +243,14 @@ const User = () => {
               <td className="px-4 py-2 border">{user.user_type}</td>
               <td className="px-4 py-2 border">{user.phone_no}</td>
               <td className="flex justify-center gap-3">
-                <button>
-                  <img src="/LeftColumn/bxs_edit.png" alt="" />
-                </button>
-                <button>
-                  <img src="/LeftColumn/ic_baseline-delete.png" alt="" />
-                </button>
+              <FaEdit
+                  className="text-blue-600 cursor-pointer"
+                  onClick={() => handleEdit(user)}
+                />
+                <MdDelete
+                  className="text-red-600 cursor-pointer"
+                  onClick={() => handleDelete(user.user_id)}
+                />
               </td>
             </tr>
           ))}
@@ -113,13 +258,20 @@ const User = () => {
       </table>
 
       {/* Add User Modal */}
-      <Model
-        isOpen={isOpen}
+      <Modal
+        isOpen={isAddOpen}
         style={{
-          overlay: { zIndex: 10, backdropFilter: "blur(3px)" },
+          overlay: {
+            zIndex: 10,
+            backdropFilter: "blur(3px)",
+          },
           content: {
-            width: "40%", height: "350px", margin: "auto",
-            borderRadius: "10px", boxShadow: "1px 1px 10px gray"
+            width: "40%",
+            height: "40%",
+            margin: "auto",
+            borderRadius: "10px",
+            boxShadow: "1px 1px 10px gray",
+            overflow: "hidden",
           },
         }}
       >
@@ -129,11 +281,9 @@ const User = () => {
             <input
               className="p-2 border rounded-md"
               type="text"
-              value={inputData.user_name}
-              placeholder="Enter Name"
-              onChange={(e) =>
-                setInputData({ ...inputData, user_name: e.target.value })
-              }
+              name="username"
+              value={inputData.username}
+              onChange={handleInputChange}
             />
           </div>
           <div>
@@ -141,11 +291,9 @@ const User = () => {
             <input
               className="p-2 border rounded-md"
               type="email"
-              value={inputData.user_email}
-              placeholder="Enter Email"
-              onChange={(e) =>
-                setInputData({ ...inputData, user_email: e.target.value })
-              }
+              name="email"
+              value={inputData.email}
+              onChange={handleInputChange}
             />
           </div>
         </div>
@@ -155,40 +303,125 @@ const User = () => {
             <h1 className="pb-3">Phone Number</h1>
             <input
               className="p-2 border rounded-md"
-              type="number"
+              type="text"
+              name="phone_no"
               value={inputData.phone_no}
-              placeholder="Enter Phone Number"
-              onChange={(e) =>
-                setInputData({ ...inputData, phone_no: e.target.value })
-              }
+              onChange={handleInputChange}
             />
           </div>
           <div>
-            <h1 className="pb-3">Password</h1>
-            <input
+            <h1 className="pb-3">User Type</h1>
+            <select
               className="p-2 border rounded-md"
-              type="password"
-              value={inputData.user_password}
-              placeholder="Enter Password"
-              onChange={(e) =>
-                setInputData({ ...inputData, user_password: e.target.value })
-              }
-            />
+              name="user_type"
+              value={inputData.user_type}
+              onChange={handleInputChange}
+            >
+              <option value="">Select Type</option>
+              <option value="admin">Admin</option>
+              <option value="user">User</option>
+            </select>
           </div>
         </div>
 
         <div className="mt-7 mx-[40%]">
           <button
-            onClick={CreatenewUser}
+            type="button"
             className="px-10 py-2 text-lg text-white bg-blue-900 rounded-md"
+            onClick={handleAddUser}
           >
             Add
           </button>
         </div>
-        <button onClick={() => setIsOpen(false)}>
+        <button onClick={() => setIsAddOpen(false)}>
           <MdCancel className="absolute top-3 right-3 size-5 hover:text-red-800" />
         </button>
-      </Model>
+      </Modal>
+
+      {/* Edit User Modal */}
+      <Modal
+        isOpen={isEditOpen}
+        style={{
+          overlay: {
+            zIndex: 10,
+            backdropFilter: "blur(3px)",
+          },
+          content: {
+            width: "40%",
+            height: "40%",
+            margin: "auto",
+            borderRadius: "10px",
+            boxShadow: "1px 1px 10px gray",
+            overflow: "hidden",
+          },
+        }}
+      >
+        {selectedUser && (
+          <>
+            <div className="flex items-center justify-around py-4">
+              <div>
+                <h1 className="pb-3">Name</h1>
+                <input
+                  className="p-2 bg-gray-100 border rounded-md"
+                  type="text"
+                  value={selectedUser.username || ""}
+                  readOnly
+                />
+              </div>
+              <div>
+                <h1 className="pb-3">Email</h1>
+                <input
+                  className="p-2 bg-gray-100 border rounded-md"
+                  type="email"
+                  value={selectedUser.email || ""}
+                  readOnly
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-around">
+              <div>
+                <h1 className="pb-3">Phone Number</h1>
+                <input
+                  className="p-2 bg-gray-100 border rounded-md"
+                  type="text"
+                  value={selectedUser.phone_no || ""}
+                  readOnly
+                />
+              </div>
+              <div>
+                <h1 className="pb-3">User Type</h1>
+                <select
+                  className="p-2 px-16 border rounded-md"
+                  value={selectedUser.user_type || ""}
+                  onChange={(e) =>
+                    setSelectedUser({
+                      ...selectedUser,
+                      user_type: e.target.value,
+                    })
+                  }
+                >
+                  <option value="admin">Admin</option>
+                  <option value="user">User</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="mt-7 mx-[40%]">
+              <button
+                type="button"
+                className="px-10 py-2 text-lg text-white bg-blue-900 rounded-md"
+                onClick={handleUpdateUser}
+              >
+                Update
+              </button>
+            </div>
+          </>
+        )}
+        <button onClick={() => setIsEditOpen(false)}>
+          <MdCancel className="absolute top-3 right-3 size-5 hover:text-red-800" />
+        </button>
+      </Modal>
     </div>
   );
 };
