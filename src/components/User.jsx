@@ -226,7 +226,7 @@ const User = () => {
       <table className="w-full mt-12 text-center table-container">
         <thead>
           <tr className="h-12 text-white bg-blue-800">
-            <th className="border">UserID</th>
+            {/* <th className="border">UserID</th> */}
             <th className="border">Username</th>
             <th className="border">Email Address</th>
             <th className="border">Status</th>
@@ -237,7 +237,7 @@ const User = () => {
         <tbody>
           {filteredUsers.map((user) => (
             <tr key={user.user_id} className="border">
-              <td className="px-4 py-2 border">{user.user_id}</td>
+              {/* <td className="px-4 py-2 border">{user.user_id}</td> */}
               <td className="px-4 py-2 border">{user.username}</td>
               <td className="px-4 py-2 border">{user.email}</td>
               <td className="px-4 py-2 border">{user.user_type}</td>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate , useLocation} from "react-router-dom";
 import { useSidebar } from "../../hooks/SidebarContext";
 import { useLogin } from "../../hooks/LoginContext";
 
@@ -17,7 +17,7 @@ const SidebarItem = ({
 }) => (
   <Link
     to={to}
-    className={`flex items-center gap-4 text-gray-500 menu-item hover:cursor-pointer hover:text-black ${
+    className={`flex items-center gap-4 text-[18px] text-gray-500 menu-item hover:cursor-pointer hover:text-black ${
       isActive ? "text-black" : ""
     }`}
     onClick={onClick}
@@ -35,13 +35,26 @@ const SidebarItem = ({
   </Link>
 );
 
-const Sidebar = () => {
+const Sidebar = ({isSidebarOpen, setIsSidebarOpen}) => {
   const { logout } = useLogin();
   const [isOpened, setIsOpened] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [selected, setSelected] = useState(1);
   const [hovered, setHovered] = useState(null);
   const [currentDate, setCurrentDate] = useState("");
+
+  useEffect(() => {
+    // Map paths to their corresponding selection index
+    const routeMap = {
+      "/admin-dashboard": 1,
+      "/admin-user": 2,
+      "/admin-property": 3,
+      "/admin-client": 4,
+      "/admin-access": 5,
+      "/admin-inputfield": 5,
+    };
+
+    setSelected(routeMap[location.pathname] || 1); // Default to Dashboard
+  }, [location.pathname]); // Runs whenever route changes
 
   useEffect(() => {
     const updateDate = () => {
@@ -109,9 +122,9 @@ const Sidebar = () => {
                 <path
                   fill="none"
                   stroke="#1e3a8a"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="1.5"
                   d="m11.25 4.75l-6.5 6.5m0-6.5l6.5 6.5"
                 />
               </svg>

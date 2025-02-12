@@ -135,138 +135,140 @@ const UserDashboard = () => {
         properties={properties}
         setFilteredPropertiesSidebar={setFilteredPropertiesSidebar} // Pass setter function
       />
-      <div className="pb-20 mx-10 my-24 w-[75%] overflow-y-scroll">
-        <div className="flex justify-between w-full py-7">
-          <div className="w-[100%] flex gap-2">
-            <select
-              className="border border-gray-300 rounded p-3 w-[20%]"
-              defaultValue="Property Type"
-            >
-              <option disabled>Property Type</option>
-              <option>Commercial</option>
-              <option>Office spaces</option>
-            </select>
-            <div className="relative cursor-pointer">
-              <div onClick={showFilter}>
-                <img src="/LeftColumn/Filter.png" alt="" />
+      <div className="w-[75%] overflow-y-scroll">
+        <div className="pb-20 mx-10 my-24 ">
+          <div className="flex justify-between w-full py-7">
+            <div className="w-[100%] flex gap-2">
+              <select
+                className="border border-gray-300 rounded p-3 w-[20%]"
+                defaultValue="Property Type"
+              >
+                <option disabled>Property Type</option>
+                <option>Commercial</option>
+                <option>Office spaces</option>
+              </select>
+              <div className="relative cursor-pointer">
+                <div onClick={showFilter}>
+                  <img src="/LeftColumn/Filter.png" alt="" />
+                </div>
+                {filter && (
+                  <SearchFilter
+                    propertyTypeShow={propertyTypeShow}
+                    setPropertyTypeShow={setPropertyTypeShow}
+                    filterpropertyInput={filterpropertyInput}
+                    setFilterPropertyInput={setFilterPropertyInput}
+                  />
+                )}
               </div>
-              {filter && (
-                <SearchFilter
-                  propertyTypeShow={propertyTypeShow}
-                  setPropertyTypeShow={setPropertyTypeShow}
-                  filterpropertyInput={filterpropertyInput}
-                  setFilterPropertyInput={setFilterPropertyInput}
-                />
-              )}
+            </div>
+
+            <div>
+              <button
+                type="button"
+                className="px-10 py-2 text-xl text-white bg-blue-900 rounded-md hover:bg-blue-800"
+                onClick={() => setShowPropertyForm(true)}
+              >
+                Add
+              </button>
             </div>
           </div>
 
-          <div>
-            <button
-              type="button"
-              className="px-10 py-2 text-xl text-white bg-blue-900 rounded-md hover:bg-blue-800"
-              onClick={() => setShowPropertyForm(true)}
-            >
-              Add
-            </button>
-          </div>
-        </div>
-
-        {showPropertyForm ? (
-          <PropertyForm
-            setShowPropertyForm={setShowPropertyForm}
-            onSubmit={fetchProperties}
-          />
-        ) : (
-          <div className="overflow-x-auto">
-            {loading ? (
-              <div className="mt-8 text-center">Loading properties...</div>
-            ) : filteredProperties.length === 0 ? (
-              <div className="mt-8 text-center">No properties found</div>
-            ) : (
-              <table className="w-full mt-12 min-w-max">
-                <thead>
-                  <tr className="h-12 text-white bg-blue-800">
-                    <th className="px-4 border">Project Name</th>
-                    <th className="px-4 border">Building</th>
-                    <th className="px-4 border">Address1</th>
-                    <th className="px-4 border">City</th>
-                    <th className="px-4 border">Area</th>
-                    <th className="px-4 border">Property Type</th>
-                    <th className="px-4 border">lease_type</th>
-                    <th className="px-4 border">C Status</th>
-                    <th className="px-4 border">Contact person</th>
-                    <th className="px-4 border">Buy rate</th>
-                    <th className="px-4 border">lease rate</th>
-                    <th className="px-4 border">Company</th>
-                    <th className="px-4 border">Description</th>
-                    <th className="px-4 border">Pincode</th>
-                    <th className="px-4 border">USP</th>
-                    <th className="px-4 border">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredProperties.map((property, index) => (
-                    <tr
-                      key={index}
-                      className="cursor-pointer hover:bg-gray-50"
-                      onClick={() => showContactDetails(property)}
-                    >
-                      <td className="px-4 py-2 border text-wrap">
-                        {property.project_name}
-                      </td>
-                      <td className="px-4 py-2 border text-wrap">
-                        {property.building}
-                      </td>
-                      <td className="px-4 py-2 border text-wrap">
-                        {property.address}
-                      </td>
-                      <td className="px-4 py-2 border text-wrap">
-                        {property.city_name}
-                      </td>
-                      <td className="px-4 py-2 border text-wrap">
-                        {property.area_name}
-                      </td>
-                      <td className="px-4 py-2 border text-wrap">
-                        {property.property_type}
-                      </td>
-                      <td className="px-4 py-2 border text-wrap">
-                        {property.lease_type}
-                      </td>
-                      <td className="px-4 py-2 border text-wrap">
-                        {property.c_status}
-                      </td>
-                      <td className="px-4 py-2 border text-wrap">
-                        {property.contact_person}
-                      </td>
-                      <td className="px-4 py-2 border text-wrap">
-                        {property.rate_buy}
-                      </td>
-                      <td className="px-4 py-2 border text-wrap">
-                        {property.rate_lease}
-                      </td>
-                      <td className="px-4 py-2 border text-wrap">
-                        {property.company}
-                      </td>
-                      <td className="px-4 py-2 border text-wrap">
-                        {property.description}
-                      </td>
-                      <td className="px-4 py-2 border text-wrap">
-                        {property.pin_code}
-                      </td>
-                      <td className="px-4 py-2 border text-wrap">
-                        {property.usp}
-                      </td>
-                      <td className="px-4 py-2 border text-wrap">
-                        {property.status_code}
-                      </td>
+          {showPropertyForm ? (
+            <PropertyForm
+              setShowPropertyForm={setShowPropertyForm}
+              onSubmit={fetchProperties}
+            />
+          ) : (
+            <div className="overflow-x-auto">
+              {loading ? (
+                <div className="mt-8 text-center">Loading properties...</div>
+              ) : filteredProperties.length === 0 ? (
+                <div className="mt-8 text-center">No properties found</div>
+              ) : (
+                <table className="w-full mt-12 min-w-max">
+                  <thead>
+                    <tr className="h-12 text-white bg-blue-800">
+                      <th className="px-4 border">Project Name</th>
+                      <th className="px-4 border">Building</th>
+                      <th className="px-4 border">Address1</th>
+                      <th className="px-4 border">City</th>
+                      <th className="px-4 border">Area</th>
+                      <th className="px-4 border">Property Type</th>
+                      <th className="px-4 border">lease_type</th>
+                      <th className="px-4 border">C Status</th>
+                      <th className="px-4 border">Contact person</th>
+                      <th className="px-4 border">Buy rate</th>
+                      <th className="px-4 border">lease rate</th>
+                      <th className="px-4 border">Company</th>
+                      <th className="px-4 border">Description</th>
+                      <th className="px-4 border">Pincode</th>
+                      <th className="px-4 border">USP</th>
+                      <th className="px-4 border">Status</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </div>
-        )}
+                  </thead>
+                  <tbody>
+                    {filteredProperties.map((property, index) => (
+                      <tr
+                        key={index}
+                        className="cursor-pointer hover:bg-gray-50"
+                        onClick={() => showContactDetails(property)}
+                      >
+                        <td className="px-4 py-2 border text-wrap">
+                          {property.project_name}
+                        </td>
+                        <td className="px-4 py-2 border text-wrap">
+                          {property.building}
+                        </td>
+                        <td className="px-4 py-2 border text-wrap">
+                          {property.address}
+                        </td>
+                        <td className="px-4 py-2 border text-wrap">
+                          {property.city_name}
+                        </td>
+                        <td className="px-4 py-2 border text-wrap">
+                          {property.area_name}
+                        </td>
+                        <td className="px-4 py-2 border text-wrap">
+                          {property.property_type}
+                        </td>
+                        <td className="px-4 py-2 border text-wrap">
+                          {property.lease_type}
+                        </td>
+                        <td className="px-4 py-2 border text-wrap">
+                          {property.c_status}
+                        </td>
+                        <td className="px-4 py-2 border text-wrap">
+                          {property.contact_person}
+                        </td>
+                        <td className="px-4 py-2 border text-wrap">
+                          {property.rate_buy}
+                        </td>
+                        <td className="px-4 py-2 border text-wrap">
+                          {property.rate_lease}
+                        </td>
+                        <td className="px-4 py-2 border text-wrap">
+                          {property.company}
+                        </td>
+                        <td className="px-4 py-2 border text-wrap">
+                          {property.description}
+                        </td>
+                        <td className="px-4 py-2 border text-wrap">
+                          {property.pin_code}
+                        </td>
+                        <td className="px-4 py-2 border text-wrap">
+                          {property.usp}
+                        </td>
+                        <td className="px-4 py-2 border text-wrap">
+                          {property.status_code}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

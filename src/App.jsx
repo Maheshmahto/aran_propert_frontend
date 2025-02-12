@@ -21,28 +21,25 @@ import Client from "./components/Client.jsx";
 import Access from "./components/Access.jsx";
 import InputField from "./components/InputField.jsx";
 
-
 const App = ({ showSidebar }) => {
-  const { user } = useLogin(); // Access the user from context
-  // Conditional Sidebar Render based on user_type
-  // const renderSidebar = () => {
-  //   if (!user) {
-  //     return null; // If no user, don't render a sidebar (e.g., on login page)
-  //   }
-
-  //   if (user.user_type === "admin") {
-  //     return <Sidebar />; // Render Admin Sidebar
-  //   } else {
-  //     return <UserSidebar />; // Render User Sidebar
-  //   }
-  // };
+  const { user } = useLogin();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   return (
     <div className="App ">
       <div className={`flex h-screen ${showSidebar ? "flex " : ""}`}>
         {/* Sidebar displayed conditionally */}
-        {showSidebar && <Sidebar />}
-        <div className={`flex-grow w-[80%] ${showSidebar ? "ml-64" : "ml-0 w-full"}`}>
+        {showSidebar && (
+          <Sidebar
+            isSidebarOpen={isSidebarOpen}
+            setIsSidebarOpen={setIsSidebarOpen}
+          />
+        )}
+        <div
+          className={`flex-grow w-[80%] ${
+            showSidebar && isSidebarOpen ? "ml-64" : ""
+          }`}
+        >
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Login />} />
@@ -54,27 +51,28 @@ const App = ({ showSidebar }) => {
             </Route>
 
             <Route element={<ProtectedRoute />}>
-            <Route path="/admin-user" element={<User/>} />  {/* ✅ Use lowercase /user */}
+              <Route path="/admin-user" element={<User />} />{" "}
+              {/* ✅ Use lowercase /user */}
             </Route>
 
             <Route element={<ProtectedRoute />}>
-              <Route path="/admin-property" element={<Property/>} />
+              <Route path="/admin-property" element={<Property />} />
             </Route>
 
             <Route element={<ProtectedRoute />}>
-              <Route path="/admin-client" element={<Client/>} />
+              <Route path="/admin-client" element={<Client />} />
             </Route>
 
             <Route element={<ProtectedRoute />}>
-              <Route path="/admin-access" element={<Access/>} />
+              <Route path="/admin-access" element={<Access />} />
             </Route>
 
             <Route element={<ProtectedRoute />}>
-              <Route path="/admin-inputfield" element={<InputField/>} />
+              <Route path="/admin-inputfield" element={<InputField />} />
             </Route>
 
-             {/* Protected Routes for User */}
-             <Route element={<ProtectedRoute  />}>
+            {/* Protected Routes for User */}
+            <Route element={<ProtectedRoute />}>
               <Route path="/user-dashboard" element={<UserDashboard />} />
             </Route>
           </Routes>

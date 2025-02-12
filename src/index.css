@@ -46,3 +46,7 @@ input::-webkit-inner-spin-button {
 input[type=number] {
   -moz-appearance: textfield;
 }
+
+.swal2-icon {
+  font-size: 12px;
+ }
