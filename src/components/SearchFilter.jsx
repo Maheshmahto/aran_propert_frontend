@@ -21,16 +21,16 @@ const SearchFilter = ({ propertyTypeShow, setPropertyTypeShow , filterpropertyIn
   };
   return (
     <div className="  absolute left-0 transform -translate-x-[150px] top-14 z-10">
-      <div className="w-72 p-3 pr-8 border  bg-white shadow-xl ">
+      <div className="p-3 pr-8 bg-white border shadow-xl w-72 ">
         <h1>Sale Status</h1>
 
-        <div className="border border-gray-300 rounded-md flex justify-between p-2 m-2 shadow-md "onClick={() => { setClosedSale(!closedSale)}} >
+        <div className="flex justify-between p-2 m-2 border border-gray-300 rounded-md shadow-md "onClick={() => { setClosedSale(!closedSale)}} >
           <input className="outline-none hover:cursor-pointer" type="text" name="Sale" id="Sale" placeholder="For Sale" readOnly />
-          <img src="/public/LeftColumn/Closed.png" className={`${!closedSale && "rotate-180"} object-none`} alt=""  />
+          <img src="/LeftColumn/Closed.png" className={`${!closedSale && "rotate-180"} object-none`} alt=""  />
         </div>
 
         <div className="flex justify-evenly">
-          <div className="flex gap-2 justify-center items-center">
+          <div className="flex items-center justify-center gap-2">
             <input
               className="accent-blue-800 hover:cursor-pointer"
               type="checkbox"
@@ -46,7 +46,7 @@ const SearchFilter = ({ propertyTypeShow, setPropertyTypeShow , filterpropertyIn
             <h1 className="hover:cursor-default">Sold</h1>
           </div>
 
-          <div className="flex gap-2 justify-center items-center">
+          <div className="flex items-center justify-center gap-2">
             <input
               className="accent-blue-800 hover:cursor-pointer"
               type="checkbox"
@@ -55,7 +55,7 @@ const SearchFilter = ({ propertyTypeShow, setPropertyTypeShow , filterpropertyIn
           </div>
         </div>
 
-        <div className="border border-gray-300 rounded-md flex justify-between p-2 m-2 " onClick={() => { setClosedSold(!closedSold)}}  >
+        <div className="flex justify-between p-2 m-2 border border-gray-300 rounded-md " onClick={() => { setClosedSold(!closedSold)}}  >
           <input className="outline-none hover:cursor-pointer"
             type="text"
             name="Sale"
@@ -63,10 +63,10 @@ const SearchFilter = ({ propertyTypeShow, setPropertyTypeShow , filterpropertyIn
             placeholder="Sold in the last"
             readOnly
           />
-          <img src="/public/LeftColumn/Closed.png" className={`${!closedSold && "rotate-180"} object-none`} alt=""   />
+          <img src="/LeftColumn/Closed.png" className={`${!closedSold && "rotate-180"} object-none`} alt=""   />
         </div>
 
-        <div className="border border-gray-300 rounded-md flex justify-between p-2 m-2  " onClick={() => { setClosedPending(!closedPending)}} >
+        <div className="flex justify-between p-2 m-2 border border-gray-300 rounded-md " onClick={() => { setClosedPending(!closedPending)}} >
           <input className="outline-none hover:cursor-pointer"
             type="text"
             name="Pending"
@@ -74,7 +74,7 @@ const SearchFilter = ({ propertyTypeShow, setPropertyTypeShow , filterpropertyIn
             placeholder="Pending"
             readOnly
           />
-          <img src="/public/LeftColumn/Closed.png"  className={`${!closedPending && "rotate-180"} object-none`} alt=""  />
+          <img src="/LeftColumn/Closed.png"  className={`${!closedPending && "rotate-180"} object-none`} alt=""  />
         </div>
 
         <h1 className="text-gray-600">Property type</h1>
@@ -82,7 +82,7 @@ const SearchFilter = ({ propertyTypeShow, setPropertyTypeShow , filterpropertyIn
         <div
          
           onClick={() => { handleShow(); setClosedProperty(!closedProperty); }}
-          className="border border-gray-300 rounded-md flex justify-between p-2 m-2 relative hover:cursor-pointer" 
+          className="relative flex justify-between p-2 m-2 border border-gray-300 rounded-md hover:cursor-pointer" 
         >
           {show && <PropertyTypeFilter setFilterPropertyInput={setFilterPropertyInput} />}
           <input className="outline-none hover:cursor-pointer"
@@ -93,7 +93,7 @@ const SearchFilter = ({ propertyTypeShow, setPropertyTypeShow , filterpropertyIn
             value={filterpropertyInput}
             readOnly
           />
-          <img src="/public/LeftColumn/Closed.png" className={`${!closedProperty && "rotate-180"} object-none`} alt=""  />
+          <img src="/LeftColumn/Closed.png" className={`${!closedProperty && "rotate-180"} object-none`} alt=""  />
         </div>
 
         <h1 className="text-gray-600">Price Range</h1>
@@ -103,34 +103,34 @@ const SearchFilter = ({ propertyTypeShow, setPropertyTypeShow , filterpropertyIn
         <h1 className="text-gray-600">Size</h1>
 
         <div className="flex justify-between">
-          <div className=" w-1/3 border border-gray-300 rounded-md flex justify-between p-2 m-2">
+          <div className="flex justify-between w-1/3 p-2 m-2 border border-gray-300 rounded-md ">
             <h3>Min</h3>
             <input
               type="text"
               name="Sale"
               id="Sale"
               placeholder="sq ft"
-              className="outline-none w-1/2"
+              className="w-1/2 outline-none"
             />
           </div>
 
-          <div className="w-1/3 border border-gray-300 rounded-md flex justify-between p-2 m-2">
+          <div className="flex justify-between w-1/3 p-2 m-2 border border-gray-300 rounded-md">
             <h3>Max</h3>
             <input
               type="text"
               name="Sale"
               id="Sale"
               placeholder="sq ft"
-              className="outline-none w-1/2"
+              className="w-1/2 outline-none"
             />
           </div>
         </div>
 
-        <div className="flex justify-center items-center gap-3">
-        <button className="px-9 py-3 text-sm font-medium text-white bg-red-800 rounded-md hover:bg-red-700 transition-all duration-200">
+        <div className="flex items-center justify-center gap-3">
+        <button className="py-3 text-sm font-medium text-white transition-all duration-200 bg-red-800 rounded-md px-9 hover:bg-red-700">
             Cancel
           </button>
-          <button className="py-3 px-3 text-sm font-medium text-white bg-blue-800 rounded-md hover:bg-blue-700 transition-all duration-200">
+          <button className="px-3 py-3 text-sm font-medium text-white transition-all duration-200 bg-blue-800 rounded-md hover:bg-blue-700">
             Apply Filters
           </button>
         </div>
