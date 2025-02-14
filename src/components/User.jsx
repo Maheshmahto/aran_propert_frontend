@@ -1,9 +1,28 @@
 import { useEffect, useState } from "react";
 import axios from "../helper/axios";
-import Modal from "react-modal";
-import { MdCancel,MdDelete } from "react-icons/md";
+import { MdCancel, MdDelete } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
 import Swal from "sweetalert2";
+
+// Custom Modal Component
+const CustomModal = ({ isOpen, onClose, children }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div 
+        className="fixed inset-0 bg-black/30 backdrop-blur-sm"
+        onClick={onClose}
+      />
+      <div className="relative min-w-[600px] bg-white rounded-lg shadow-lg p-6 z-10">
+        {children}
+        <button onClick={onClose}>
+          <MdCancel className="absolute top-3 right-3 size-5 hover:text-red-800" />
+        </button>
+      </div>
+    </div>
+  );
+};
 
 const User = () => {
   const closeModal = () => {
@@ -17,25 +36,18 @@ const User = () => {
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [inputData, setInputData] = useState({
-    username: "",
-    email: "",
+    user_name: "",
+    user_email: "",
     phone_no: "",
-    user_type: "",
+    user_password: "",
   });
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setInputData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+  
 
   const fetchUsers = async () => {
     try {
       const response = await axios.get("/api/get_all_users");
       setUsers(Array.isArray(response.data.data) ? response.data.data : []);
-      console.log(response.data);
     } catch (error) {
       console.error("Error fetching users:", error);
       Swal.fire({
@@ -73,20 +85,14 @@ const User = () => {
       Swal.fire({
         icon: "error",
         title: "Registration Failed",
-        text:
-          error.response?.data?.detail ||
-          "An error occurred. Please try again.",
+        text: error.response?.data?.detail || "An error occurred. Please try again.",
       });
     }
   };
 
   const handleAddUser = async () => {
-    if (
-      !inputData.username ||
-      !inputData.email ||
-      !inputData.phone_no ||
-      !inputData.user_type
-    ) {
+    if (!inputData.user_name || !inputData.user_email || !inputData.phone_no || !inputData.user_password) {
+      console.log(inputData.user_name);
       Swal.fire({
         icon: "error",
         title: "Invalid Data",
@@ -96,18 +102,29 @@ const User = () => {
     }
 
     try {
-      await CreatenewUser();
-      setIsAddOpen(false);
-      setInputData({
-        username: "",
-        email: "",
-        phone_no: "",
-        user_type: "",
+      const response = await axios.post(`/api/insert/AriyanspropertiesUser_register/`, inputData);
+    if (response?.data) {
+      Swal.fire({
+        icon: "success",
+        title: "User registered successfully",
+        text: "Redirecting...",
+        timer: 2000,
+        timerProgressBar: true,
+        showConfirmButton: false,
+      }).then(() => {
+        setInputData({ user_name: "", user_email: "", phone_no: "", user_type: "" });
+        setIsAddOpen(false);
+        window.location.reload();
       });
-    } catch (error) {
-      console.error("Error adding user:", error);
     }
-  };
+  } catch (error) {
+    Swal.fire({
+      icon: "error",
+      title: "Registration Failed",
+      text: error.response?.data?.detail || "An error occurred. Please try again.",
+    });
+  }
+};
 
   const handleDelete = async (userId) => {
     Swal.fire({
@@ -150,7 +167,6 @@ const User = () => {
     }
 
     try {
-      // Get the token from localStorage
       const token = localStorage.getItem("token");
 
       if (!token) {
@@ -163,8 +179,8 @@ const User = () => {
       }
 
       const response = await axios.put(
-        `/api/update_user_type?user_id=${selectedUser.user_id}&user_type=${selectedUser.user_type}`,
-        {}, // Empty body since we're using query parameters
+        `/api/update_user_type/?user_id=${selectedUser.user_id}&user_type=${selectedUser.user_type}`,
+        {},
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -174,11 +190,7 @@ const User = () => {
       );
 
       if (response?.data) {
-        await Swal.fire(
-          "Updated!",
-          "Client details updated successfully",
-          "success"
-        );
+        await Swal.fire("Updated!", "Client details updated successfully", "success");
         await fetchUsers();
         closeModal();
       }
@@ -187,9 +199,7 @@ const User = () => {
       Swal.fire({
         icon: "error",
         title: "User Update Failed",
-        text:
-          error.response?.data?.message ||
-          "An error occurred. Please try again.",
+        text: error.response?.data?.message || "An error occurred. Please try again.",
       });
     }
   };
@@ -199,14 +209,10 @@ const User = () => {
   );
 
   return (
-    <div className="pb-20 mx-10 my-24">
-      <div className="flex justify-between ">
+    <div className="pb-20 pl-0 mx-10 my-24">
+      <div className="flex justify-between">
         <div className="flex gap-4 items-center border border-gray-300 rounded-md w-[30%] px-4 py-2">
-          <img
-            className="object-none"
-            src="/LeftColumn/search-normal.png"
-            alt=""
-          />
+          <img className="object-none" src="/LeftColumn/search-normal.png" alt="" />
           <input
             className="w-full outline-none"
             type="text"
@@ -216,7 +222,7 @@ const User = () => {
           />
         </div>
         <button
-          className="px-10 py-2 text-xl text-white bg-blue-900 rounded-md hover:bg-blue-800"
+          className="px-10 py-2 text-xl text-white bg-blue-900 rounded-md"
           onClick={() => setIsAddOpen(true)}
         >
           Add
@@ -225,144 +231,157 @@ const User = () => {
 
       <table className="w-full mt-12 text-center table-container">
         <thead>
-          <tr className="h-12 text-white bg-blue-800">
-            {/* <th className="border">UserID</th> */}
+          {/* <tr className="h-12 text-white bg-blue-800">
+            <th className="border">UserID</th>
             <th className="border">Username</th>
             <th className="border">Email Address</th>
             <th className="border">Status</th>
             <th className="border">Phone No.</th>
             <th className="border">Actions</th>
+          </tr> */}
+            <tr className="h-12 text-white bg-blue-800">
+            {/* <th className="border">UserID</th> */}
+            <th className="border">Username</th>
+            <th className="border">Email Address</th>
+            <th className="border">User Type</th>
+            <th className="border">Phone No.</th>
+            <th className="border">Can add</th>
+            <th className="border">Can edit</th>
+            <th className="border">Can view</th>
+            <th className="border">Can delete</th>
+            <th className="border">Can Print</th>
+            <th className="border">Actions</th>
           </tr>
         </thead>
         <tbody>
           {filteredUsers.map((user) => (
+            // <tr key={user.user_id} className="border">
+            //   <td className="px-4 py-2 border">{user.user_id}</td>
+            //   <td className="px-4 py-2 border">{user.username}</td>
+            //   <td className="px-4 py-2 border">{user.email}</td>
+            //   <td className="px-4 py-2 border">{user.user_type}</td>
+            //   <td className="px-4 py-2 border">{user.phone_no}</td>
+            //   <td className="flex justify-center gap-3">
+            //     <FaEdit
+            //       className="text-blue-600 cursor-pointer"
+            //       onClick={() => handleEdit(user)}
+            //     />
+            //     <MdDelete
+            //       className="text-red-600 cursor-pointer"
+            //       onClick={() => handleDelete(user.user_id)}
+            //     />
+            //   </td>
+            // </tr>
             <tr key={user.user_id} className="border">
-              {/* <td className="px-4 py-2 border">{user.user_id}</td> */}
-              <td className="px-4 py-2 border">{user.username}</td>
-              <td className="px-4 py-2 border">{user.email}</td>
-              <td className="px-4 py-2 border">{user.user_type}</td>
-              <td className="px-4 py-2 border">{user.phone_no}</td>
-              <td className="flex justify-center gap-3">
+            {/* <td className="px-4 py-2 border">{user.user_id}</td> */}
+            <td className="px-4 py-2 border">{user.username}</td>
+            <td className="px-4 py-2 border">{user.email}</td>
+            <td className="px-4 py-2 border">{user.user_type}</td>
+            <td className="px-4 py-2 border">{user.phone_no}</td>
+            <td className="px-4 py-2 border">{user.can_add ? "Yes" : "No"}</td>
+            <td className="px-4 py-2 border">{user.can_edit ? "Yes" : "No"}</td>
+            <td className="px-4 py-2 border">{user.can_view ? "Yes" : "No"}</td>
+            <td className="px-4 py-2 border">{user.can_delete ? "Yes" : "No"}</td>
+            <td className="px-4 py-2 border">{user.can_print_report ? "Yes" : "No"}</td>
+            <td className="flex justify-center gap-3">
               <FaEdit
-                  className="text-blue-600 cursor-pointer"
-                  onClick={() => handleEdit(user)}
-                />
-                <MdDelete
-                  className="text-red-600 cursor-pointer"
-                  onClick={() => handleDelete(user.user_id)}
-                />
-              </td>
-            </tr>
+                className="text-blue-600 cursor-pointer"
+                onClick={() => handleEdit(user)}
+              />
+              <MdDelete
+                className="text-red-600 cursor-pointer"
+                onClick={() => handleDelete(user.user_id)}
+              />
+            </td>
+          </tr>
           ))}
         </tbody>
       </table>
 
       {/* Add User Modal */}
-      <Modal
-        isOpen={isAddOpen}
-        style={{
-          overlay: {
-            zIndex: 10,
-            backdropFilter: "blur(3px)",
-          },
-          content: {
-            width: "40%",
-            height: "40%",
-            margin: "auto",
-            borderRadius: "10px",
-            boxShadow: "1px 1px 10px gray",
-            overflow: "hidden",
-          },
-        }}
-      >
-        <div className="flex items-center justify-around py-4">
+      <CustomModal isOpen={isAddOpen} onClose={() => setIsAddOpen(false)}>
+        <div className="flex justify-around items-center py-4">
           <div>
             <h1 className="pb-3">Name</h1>
             <input
-              className="p-2 border rounded-md"
+              className="border rounded-md p-2"
               type="text"
               name="username"
-              value={inputData.username}
-              onChange={handleInputChange}
+              value={inputData.user_name}
+              onChange={(e) =>
+                setInputData({ ...inputData, user_name: e.target.value })
+              }
+              placeholder="Enter username"
             />
           </div>
           <div>
             <h1 className="pb-3">Email</h1>
             <input
-              className="p-2 border rounded-md"
+              className="border rounded-md p-2"
               type="email"
               name="email"
-              value={inputData.email}
-              onChange={handleInputChange}
+              value={inputData.user_email}
+               onChange={(e) =>
+                setInputData({ ...inputData, user_email: e.target.value })
+              }
+              placeholder="Enter Email"
             />
           </div>
         </div>
 
-        <div className="flex items-center justify-around">
-          <div>
+        <div className="flex justify-around items-center">
+          <div className="">
             <h1 className="pb-3">Phone Number</h1>
             <input
-              className="p-2 border rounded-md"
+              className="border rounded-md p-2"
               type="text"
               name="phone_no"
               value={inputData.phone_no}
-              onChange={handleInputChange}
+              onChange={(e) =>
+                setInputData({ ...inputData, phone_no: e.target.value })
+              } 
+              placeholder="Enter Phone no."
             />
           </div>
-          <div>
-            <h1 className="pb-3">User Type</h1>
-            <select
-              className="p-2 border rounded-md"
+          <div >
+            <h1 className="pb-3">Password</h1>
+            <input
+              className="border rounded-md p-2"
               name="user_type"
-              value={inputData.user_type}
-              onChange={handleInputChange}
-            >
-              <option value="">Select Type</option>
-              <option value="admin">Admin</option>
-              <option value="user">User</option>
-            </select>
+              value={inputData.user_password}
+              type="password"
+              placeholder="Enter password"
+              onChange={(e) =>
+                setInputData({ ...inputData, user_password: e.target.value })
+              }
+            
+              
+            />
           </div>
         </div>
 
-        <div className="mt-7 mx-[40%]">
+        <div className="mt-7 mx-[40%]" onClick={handleAddUser}>
           <button
             type="button"
-            className="px-10 py-2 text-lg text-white bg-blue-900 rounded-md"
-            onClick={handleAddUser}
+            className="bg-blue-900 py-2 px-10 text-lg rounded-md text-white"
+            onChange={(e) =>
+              setInputData({ ...inputData, user_password: e.target.value })
+            }
           >
             Add
           </button>
         </div>
-        <button onClick={() => setIsAddOpen(false)}>
-          <MdCancel className="absolute top-3 right-3 size-5 hover:text-red-800" />
-        </button>
-      </Modal>
+      </CustomModal>
 
       {/* Edit User Modal */}
-      <Modal
-        isOpen={isEditOpen}
-        style={{
-          overlay: {
-            zIndex: 10,
-            backdropFilter: "blur(3px)",
-          },
-          content: {
-            width: "40%",
-            height: "40%",
-            margin: "auto",
-            borderRadius: "10px",
-            boxShadow: "1px 1px 10px gray",
-            overflow: "hidden",
-          },
-        }}
-      >
+      <CustomModal isOpen={isEditOpen} onClose={() => setIsEditOpen(false)}>
         {selectedUser && (
           <>
-            <div className="flex items-center justify-around py-4">
+            <div className="flex justify-around items-center py-4">
               <div>
                 <h1 className="pb-3">Name</h1>
                 <input
-                  className="p-2 bg-gray-100 border rounded-md"
+                  className="border rounded-md p-2 bg-gray-100"
                   type="text"
                   value={selectedUser.username || ""}
                   readOnly
@@ -371,7 +390,7 @@ const User = () => {
               <div>
                 <h1 className="pb-3">Email</h1>
                 <input
-                  className="p-2 bg-gray-100 border rounded-md"
+                  className="border rounded-md p-2 bg-gray-100"
                   type="email"
                   value={selectedUser.email || ""}
                   readOnly
@@ -379,11 +398,11 @@ const User = () => {
               </div>
             </div>
 
-            <div className="flex items-center justify-around">
+            <div className="flex justify-around items-center">
               <div>
                 <h1 className="pb-3">Phone Number</h1>
                 <input
-                  className="p-2 bg-gray-100 border rounded-md"
+                  className="border rounded-md p-2 bg-gray-100"
                   type="text"
                   value={selectedUser.phone_no || ""}
                   readOnly
@@ -392,7 +411,7 @@ const User = () => {
               <div>
                 <h1 className="pb-3">User Type</h1>
                 <select
-                  className="p-2 px-16 border rounded-md"
+                  className="border rounded-md p-2 px-16"
                   value={selectedUser.user_type || ""}
                   onChange={(e) =>
                     setSelectedUser({
@@ -410,7 +429,7 @@ const User = () => {
             <div className="mt-7 mx-[40%]">
               <button
                 type="button"
-                className="px-10 py-2 text-lg text-white bg-blue-900 rounded-md"
+                className="bg-blue-900 py-2 px-10 text-lg rounded-md text-white"
                 onClick={handleUpdateUser}
               >
                 Update
@@ -418,10 +437,7 @@ const User = () => {
             </div>
           </>
         )}
-        <button onClick={() => setIsEditOpen(false)}>
-          <MdCancel className="absolute top-3 right-3 size-5 hover:text-red-800" />
-        </button>
-      </Modal>
+      </CustomModal>
     </div>
   );
 };

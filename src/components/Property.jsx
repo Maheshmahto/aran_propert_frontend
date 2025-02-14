@@ -114,7 +114,7 @@ const Property = () => {
   };
 
   return (
-    <div className="pb-20 mx-10 my-24">
+    <div className="pb-20 mx-10 pl-20 my-24">
       <div className="flex justify-between h-10">
         <div className="flex gap-4 items-center border border-gray-300 rounded-md w-[30%] px-4 py-2">
           <img

@@ -1,10 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import { MdCancel } from "react-icons/md";
-import Model from "react-modal";
+import axios from "../helper/axios";
+import Swal from "sweetalert2";
 
-const CommercialPropertyModal = ({ isOpen, onClose }) => {
+const CommercialPropertyModal = ({ isOpen, onClose, id }) => {
+  console.log("Property ID:", id);
+
+  const [propertyId, setPropertyId] = useState(id || "");
+
   const [formData, setFormData] = useState({
+    property_type_id: id || "",
     workstationType: "Cubicle",
     workstationCount: "",
     cabinCount: "",
@@ -18,6 +24,14 @@ const CommercialPropertyModal = ({ isOpen, onClose }) => {
     receptionArea: true,
   });
 
+  useEffect(() => {
+    setPropertyId(id);
+    setFormData((prevState) => ({
+      ...prevState,
+      property_type_id: id || "", // Ensure formData updates when id changes
+    }));
+  }, [id]);
+
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prevState) => ({
@@ -26,13 +40,15 @@ const CommercialPropertyModal = ({ isOpen, onClose }) => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form Submitted", formData);
+    console.log("Form Submitted:", formData);
+    await furnishedProperty();
   };
 
   const handleCancel = () => {
     setFormData({
+      property_type_id: propertyId,
       workstationType: "Cubicle",
       workstationCount: "",
       cabinCount: "",
@@ -46,6 +62,58 @@ const CommercialPropertyModal = ({ isOpen, onClose }) => {
       receptionArea: true,
     });
     onClose();
+  };
+
+  const token = localStorage.getItem("token");
+
+  const furnishedProperty = async () => {
+    if (!token) {
+      console.error("No authentication token found");
+      return;
+    }
+
+    // Convert number fields properly
+    const formattedData = {
+      ...formData,
+      property_type_id: propertyId, // Ensure correct property_id is included
+      workstationCount: Number(formData.workstationCount) || 0,
+      cabinCount: Number(formData.cabinCount) || 0,
+      meetingRoom: Number(formData.meetingRoom) || 0,
+      conferenceRoom: Number(formData.conferenceRoom) || 0,
+      cafeteriaSeats: Number(formData.cafeteriaSeats) || 0,
+      washrooms: Number(formData.washrooms) || 0,
+      pantryArea: Boolean(formData.pantryArea),
+      backupRoom: Boolean(formData.backupRoom),
+      serverRoom: Boolean(formData.serverRoom),
+      receptionArea: Boolean(formData.receptionArea),
+    };
+
+    try {
+      console.log("Sending request with data:", formattedData);
+
+      const response = await axios.post("/api/furnished_properties/", formattedData, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+          if (response?.data) {
+            Swal.fire({
+              icon: "success",
+              title: " Commercial Property added successfully",
+              text: "Redirecting...",
+              timer: 2000,
+              timerProgressBar: true,
+              showConfirmButton: false,
+            })
+            onClose();
+          }
+
+
+      console.log("Response:", response.data);
+    } catch (error) {
+      console.error("API Error:", error);
+    }
   };
 
   return (
@@ -73,7 +141,7 @@ const CommercialPropertyModal = ({ isOpen, onClose }) => {
           <MdCancel className="text-gray-500 hover:text-red-600 text-xl" />
         </button>
 
-        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-6 mt-3">
+        <div className="grid grid-cols-2 gap-5 mt-3">
           <div>
             <h2 className="font-semibold text-lg mb-2">1. Workstation</h2>
 
@@ -83,7 +151,7 @@ const CommercialPropertyModal = ({ isOpen, onClose }) => {
               value={formData.workstationCount}
               onChange={handleInputChange}
               placeholder="Number of Workstations"
-              className="w-full border border-gray-300 rounded p-2 focus:outline-none "
+              className="w-full border border-gray-300 rounded p-2 focus:outline-none"
             />
             <div className="flex gap-4 mt-4">
               {["Cubicle", "Linear", "Both"].map((option) => (
@@ -110,16 +178,14 @@ const CommercialPropertyModal = ({ isOpen, onClose }) => {
             { label: "Washrooms", key: "washrooms" },
           ].map(({ label, key }, index) => (
             <div key={index}>
-              <h2 className="font-semibold text-lg mb-2">
-                {index + 2}. {label}
-              </h2>
+              <h2 className="font-semibold text-lg mb-2">{index + 2}. {label}</h2>
               <input
                 type="number"
                 name={key}
                 value={formData[key]}
                 onChange={handleInputChange}
                 placeholder={`Number of ${label}`}
-                className="w-full border border-gray-300 rounded p-2 focus:outline-none "
+                className="w-full border border-gray-300 rounded p-2 focus:outline-none"
               />
             </div>
           ))}
@@ -131,16 +197,14 @@ const CommercialPropertyModal = ({ isOpen, onClose }) => {
             { label: "Reception Area", key: "receptionArea" },
           ].map(({ label, key }, index) => (
             <div key={index + 6}>
-              <h2 className="font-semibold text-lg mb-2">
-                {index + 7}. {label}
-              </h2>
+              <h2 className="font-semibold text-lg mb-2">{index + 7}. {label}</h2>
               <label className="flex items-center gap-2">
                 <input
                   type="checkbox"
                   name={key}
                   checked={formData[key]}
                   onChange={handleInputChange}
-                  className=" w-4 h-4 hover:cursor-pointer accent-blue-800"
+                  className="w-4 h-4 hover:cursor-pointer accent-blue-800"
                 />
                 Yes
               </label>
@@ -156,13 +220,14 @@ const CommercialPropertyModal = ({ isOpen, onClose }) => {
               Cancel
             </button>
             <button
-              type="submit"
+              type="button"
+              onClick={handleSubmit}
               className="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
             >
               Submit
             </button>
           </div>
-        </form>
+        </div>
       </div>
     </Modal>
   );

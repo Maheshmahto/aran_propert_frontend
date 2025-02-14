@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate , useLocation} from "react-router-dom";
+import { useEffect, useState, useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useSidebar } from "../../hooks/SidebarContext";
 import { useLogin } from "../../hooks/LoginContext";
+import { SidebarOpen } from "lucide-react";
 
 const SidebarItem = ({
   to,
@@ -14,65 +15,99 @@ const SidebarItem = ({
   onClick,
   onMouseEnter,
   onMouseLeave,
+  children,
+  ref
 }) => (
-  <Link
-    to={to}
-    className={`flex items-center gap-4 text-[18px] text-gray-500 menu-item hover:cursor-pointer hover:text-black ${
-      isActive ? "text-black" : ""
-    }`}
-    onClick={onClick}
+  <div
+    className="relative"
     onMouseEnter={onMouseEnter}
     onMouseLeave={onMouseLeave}
+    ref={ref}
   >
-    <img
-      className="object-contain w-6 h-6 menu-icon"
-      src={isActive || isHovered ? activeIcon : icon}
-      alt={`${label} Icon`}
-    />
-    {isSidebarOpen && (
-      <span className={isActive ? "text-black" : ""}>{label}</span>
+    {to ? (
+      <Link
+        to={to}
+        className={`flex items-center gap-4 text-gray-500 menu-item hover:cursor-pointer hover:text-black ${
+          isActive ? "text-black" : ""
+        }`}
+        onClick={onClick}
+      >
+        <img
+          className="object-contain w-6 h-6 menu-icon"
+          src={isActive || isHovered ? activeIcon : icon}
+          alt={`${label} Icon`}
+        />
+        {isSidebarOpen && <span className={isActive ? "text-black" : ""}>{label}</span>}
+      </Link>
+    ) : (
+      <button
+        className={`flex items-center gap-4 w-full text-gray-500 hover:text-black ${
+          isActive ? "text-black" : ""
+        }`}
+        onClick={onClick}
+      >
+        <img
+          className="object-contain w-6 h-6"
+          src={isActive || isHovered ? activeIcon : icon}
+          alt={`${label} Icon`}
+        />
+        {isSidebarOpen && (
+          <>
+            <span className={isActive ? "text-black" : ""}>{label}</span>
+            <img
+              className={`ml-auto transition-transform ${
+                isActive ? "rotate-180" : ""
+              }`}
+              src="/LeftColumn/Closed.png"
+              alt=""
+            />
+          </>
+        )}
+      </button>
     )}
-  </Link>
+    {children}
+  </div>
 );
 
-const Sidebar = ({isSidebarOpen, setIsSidebarOpen}) => {
+const Sidebar = ({isSidebarOpen , setIsSidebarOpen}) => {
   const { logout } = useLogin();
   const [isOpened, setIsOpened] = useState(false);
+  
   const [selected, setSelected] = useState(1);
   const [hovered, setHovered] = useState(null);
   const [currentDate, setCurrentDate] = useState("");
-
-  useEffect(() => {
-    // Map paths to their corresponding selection index
-    const routeMap = {
-      "/admin-dashboard": 1,
-      "/admin-user": 2,
-      "/admin-property": 3,
-      "/admin-client": 4,
-      "/admin-access": 5,
-      "/admin-inputfield": 5,
-    };
-
-    setSelected(routeMap[location.pathname] || 1); // Default to Dashboard
-  }, [location.pathname]); // Runs whenever route changes
+  const settingsRef = useRef(null);
 
   useEffect(() => {
     const updateDate = () => {
       const now = new Date();
       const formattedDate = new Intl.DateTimeFormat("en-GB", {
-        weekday: "short", // Mon
-        day: "2-digit", // 10
-        month: "short", // Feb
-        year: "numeric", // 2025
+        weekday: "short",
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
       }).format(now);
 
       setCurrentDate(formattedDate);
     };
 
-    updateDate(); // Set initial date
-    const interval = setInterval(updateDate, 1000); // Update every second
+    updateDate();
+    const interval = setInterval(updateDate, 1000);
 
-    return () => clearInterval(interval); // Cleanup on unmount
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (settingsRef.current && !settingsRef.current.contains(event.target)) {
+        setIsOpened(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
 
   const handleToggle = () => {
@@ -80,10 +115,18 @@ const Sidebar = ({isSidebarOpen, setIsSidebarOpen}) => {
     if (!isSidebarOpen) {
       setIsOpened(false);
     }
+    console.log("Sidebar is",  isSidebarOpen);
   };
 
   const handleLogOut = () => {
     logout();
+  };
+
+  const handleNavItemClick = (itemNumber) => {
+    setSelected(itemNumber);
+    if (itemNumber !== 5) {
+      setIsOpened(false);
+    }
   };
 
   return (
@@ -107,41 +150,19 @@ const Sidebar = ({isSidebarOpen, setIsSidebarOpen}) => {
           )}
           <button
             onClick={handleToggle}
-            className={`absolute ${
-              isSidebarOpen ? "right-[-32px]" : "right-[-32px]"
-            } top-1/2 -translate-y-1/2`}
+            className={`absolute ${isSidebarOpen ? "right-[-30px]" : "right-[-30px]"} top-1/2 -translate-y-1/2`}
             aria-label="Toggle Sidebar"
           >
-            {isSidebarOpen ? (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="30"
-                height="30"
-                viewBox="0 0 16 16"
-              >
-                <path
-                  fill="none"
-                  stroke="#1e3a8a"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="1.5"
-                  d="m11.25 4.75l-6.5 6.5m0-6.5l6.5 6.5"
-                />
-              </svg>
-            ) : (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width={30}
-                height={30}
-                viewBox="0 0 24 24"
-              >
-                <path
-                  fill="#1e3a8a"
-                  fillRule="evenodd"
-                  d="M3 16h18v2H3zm0-5h18v2H3zm0-5h18v2H3z"
-                ></path>
-              </svg>
-            )}
+            {/* <img
+              src="https://img.icons8.com/?size=100&id=Rdp3AydLFY2A&format=png&color=000000"
+              className="w-6 h-6"
+              alt="Toggle"
+            /> */}
+                {
+        isSidebarOpen ? <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 16 16"><path fill="none" stroke="#1e3a8a" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m11.25 4.75l-6.5 6.5m0-6.5l6.5 6.5"/></svg> :(    
+            <svg xmlns="http://www.w3.org/2000/svg" width={30} height={30} viewBox="0 0 24 24"><path fill="#1e3a8a" fillRule="evenodd" d="M3 16h18v2H3zm0-5h18v2H3zm0-5h18v2H3z"></path></svg>
+        )
+      }
           </button>
         </div>
       </div>
@@ -155,7 +176,7 @@ const Sidebar = ({isSidebarOpen, setIsSidebarOpen}) => {
           isActive={selected === 1}
           isHovered={hovered === 1}
           isSidebarOpen={isSidebarOpen}
-          onClick={() => setSelected(1)}
+          onClick={() => handleNavItemClick(1)}
           onMouseEnter={() => setHovered(1)}
           onMouseLeave={() => setHovered(null)}
         />
@@ -168,7 +189,7 @@ const Sidebar = ({isSidebarOpen, setIsSidebarOpen}) => {
           isActive={selected === 2}
           isHovered={hovered === 2}
           isSidebarOpen={isSidebarOpen}
-          onClick={() => setSelected(2)}
+          onClick={() => handleNavItemClick(2)}
           onMouseEnter={() => setHovered(2)}
           onMouseLeave={() => setHovered(null)}
         />
@@ -181,7 +202,7 @@ const Sidebar = ({isSidebarOpen, setIsSidebarOpen}) => {
           isActive={selected === 3}
           isHovered={hovered === 3}
           isSidebarOpen={isSidebarOpen}
-          onClick={() => setSelected(3)}
+          onClick={() => handleNavItemClick(3)}
           onMouseEnter={() => setHovered(3)}
           onMouseLeave={() => setHovered(null)}
         />
@@ -194,47 +215,27 @@ const Sidebar = ({isSidebarOpen, setIsSidebarOpen}) => {
           isActive={selected === 4}
           isHovered={hovered === 4}
           isSidebarOpen={isSidebarOpen}
-          onClick={() => setSelected(4)}
+          onClick={() => handleNavItemClick(4)}
           onMouseEnter={() => setHovered(4)}
           onMouseLeave={() => setHovered(null)}
         />
 
-        <div
-          className="relative"
+        <SidebarItem
+          icon="/LeftColumn/Settings.png"
+          activeIcon="/LeftColumn/icon (1).png"
+          label="Settings"
+          isActive={selected === 5}
+          isHovered={hovered === 5}
+          isSidebarOpen={isSidebarOpen}
+          onClick={() => {
+            setIsOpened(!isOpened);
+            setSelected(5);
+            setIsSidebarOpen(true);
+          }}
           onMouseEnter={() => setHovered(5)}
-          onMouseLeave={() => selected !== 5 && setHovered(null)}
+          onMouseLeave={() => setHovered(null)}
+          ref={settingsRef}
         >
-          <button
-            className={`flex items-center gap-4 w-full text-gray-500 hover:text-black ${
-              selected === 5 ? "text-black" : ""
-            }`}
-            onClick={() => {
-              setIsOpened(!isOpened);
-              setSelected(5);
-            }}
-          >
-            <img
-              className="object-contain w-6 h-6"
-              src={
-                isOpened || hovered === 5
-                  ? "/LeftColumn/icon (1).png"
-                  : "/LeftColumn/Settings.png"
-              }
-              alt="Settings"
-            />
-            {isSidebarOpen && (
-              <>
-                <span>Settings</span>
-                <img
-                  className={`ml-auto transition-transform ${
-                    isOpened ? "rotate-180" : ""
-                  }`}
-                  src="/LeftColumn/Closed.png"
-                  alt=""
-                />
-              </>
-            )}
-          </button>
           {isOpened && isSidebarOpen && (
             <div className="flex flex-col gap-3 mt-4 ml-10">
               <Link
@@ -251,7 +252,7 @@ const Sidebar = ({isSidebarOpen, setIsSidebarOpen}) => {
               </Link>
             </div>
           )}
-        </div>
+        </SidebarItem>
       </nav>
 
       <button
@@ -260,7 +261,7 @@ const Sidebar = ({isSidebarOpen, setIsSidebarOpen}) => {
           isSidebarOpen ? "justify-start" : "justify-center"
         }`}
       >
-        <img className="w-6 h-6" src="/LeftColumn/Logout.png" alt="Logout" />
+        <img className=" h-5" src="/LeftColumn/Logout.png" alt="Logout" />
         {isSidebarOpen && <span>Logout</span>}
       </button>
     </div>

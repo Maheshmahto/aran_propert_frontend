@@ -2,8 +2,28 @@ import React from "react";
 import { useState } from "react";
 import Model from "react-modal";
 import { MdCancel } from "react-icons/md";
+import { useEffect} from "react";
+import axios from "../helper/axios";
+
 const InputField = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get("/api/get_all_users");
+        console.log(response.data);
+
+        setUsers(Array.isArray(response.data.data) ? response.data.data : []);
+      
+        console.log(users);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+    fetchUsers();
+  }, []);
   return (
     <div className="mx-10 my-24">
       <div className="mt-7 table-container ">
@@ -17,7 +37,7 @@ const InputField = () => {
               onClick={() => {
                 setIsOpen(true);
               }}
-              className="px-10 py-2 text-xl text-white bg-blue-900 rounded-md hover:bg-blue-800"
+              className="px-10 py-2 text-xl text-white bg-blue-900 rounded-md shadow-md "
             >
               Add
             </button>
@@ -71,51 +91,17 @@ const InputField = () => {
             <th className="border"> ID</th>
             <th className="border ">Name</th>
           </tr>
+          {
+            users.map((user)=>(
+              <tr className="p-4">
+              <td className="p-4">{user.user_id}</td>
+              <td>{user.username}</td>
+            </tr>
+            ))           
+          }
+         
 
-          <tr className="p-4">
-            <td className="p-4">Cell text</td>
-            <td>Cell text</td>
-          </tr>
-
-          <tr>
-            <td className="p-4">Cell text</td>
-            <td>Cell text</td>
-          </tr>
-
-          <tr>
-            <td className="p-4">Cell text</td>
-            <td>Cell text</td>
-          </tr>
-
-          <tr>
-            <td className="p-4">Cell text</td>
-            <td>Cell text</td>
-          </tr>
-
-          <tr>
-            <td className="p-4">Cell text</td>
-            <td>Cell text</td>
-          </tr>
-
-          <tr>
-            <td className="p-4">Cell text</td>
-            <td>Cell text</td>
-          </tr>
-
-          <tr>
-            <td className="p-4">Cell text</td>
-            <td>Cell text</td>
-          </tr>
-
-          <tr>
-            <td className="p-4">Cell text</td>
-            <td>Cell text</td>
-          </tr>
-
-          <tr>
-            <td className="p-4">Cell text</td>
-            <td>Cell text</td>
-          </tr>
+          
         </table>
       </div>
     </div>
