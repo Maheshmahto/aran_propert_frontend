@@ -190,7 +190,7 @@ const User = () => {
       );
 
       if (response?.data) {
-        await Swal.fire("Updated!", "Client details updated successfully", "success");
+        await Swal.fire("Updated!", "User updated successfully", "success");
         await fetchUsers();
         closeModal();
       }

@@ -102,7 +102,7 @@ const Login = () => {
             {/* Email Input */}
 
             <div className="border-black border-2 rounded-md w-2/5 p-1 flex items-center">
-              <img className="px-3" src="/Email.png" alt="Email Icon" />
+              <img className="px-3" src="./LeftColumn/Email.png" alt="Email Icon" />
               <input
                 className="border-none outline-none w-full"
                 type="email"
@@ -116,7 +116,7 @@ const Login = () => {
 
             {/* Password Input */}
             <div className="border-black border-2 rounded-md w-2/5 p-1 flex items-center">
-              <img className="px-3" src="Password.png" alt="Password Icon" />
+              <img className="px-3" src="./LeftColumn/Password.png" alt="Password Icon" />
               <input
                 className="border-none outline-none w-full"
                 type="password"
@@ -139,7 +139,7 @@ const Login = () => {
         </form>
         <img
           className="w-full absolute bottom-10 p-2"
-          src="P1_bg.png"
+          src="./LeftColumn/P1_bg.png"
           alt="Background"
         />
       </div>
@@ -148,7 +148,7 @@ const Login = () => {
       <div
         className="w-1/2 h-full text-3xl text-gray-600 bg-cover bg-right bg-no-repeat"
         style={{
-          backgroundImage: "url('P2_bg.png')",
+          backgroundImage: "url('./LeftColumn/P2_bg.png')",
         }}
       >
         <div className="text-center pt-20 ">

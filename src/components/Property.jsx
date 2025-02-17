@@ -119,7 +119,7 @@ const Property = () => {
         <div className="flex gap-4 items-center border border-gray-300 rounded-md w-[30%] px-4 py-2">
           <img
             className="object-none"
-            src="/LeftColumn/search-normal.png"
+            src="./LeftColumn/search-normal.png"
             alt="search"
           />
           <input

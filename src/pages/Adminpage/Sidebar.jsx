@@ -58,7 +58,7 @@ const SidebarItem = ({
               className={`ml-auto transition-transform ${
                 isActive ? "rotate-180" : ""
               }`}
-              src="/LeftColumn/Closed.png"
+              src="./LeftColumn/Closed.png"
               alt=""
             />
           </>
@@ -139,7 +139,7 @@ const Sidebar = ({isSidebarOpen , setIsSidebarOpen}) => {
         <div className="relative flex items-center w-full gap-2">
           <img
             className="object-contain w-14 h-14"
-            src="/LeftColumn/Logo.png"
+            src="./LeftColumn/Logo.png"
             alt="Logo"
           />
           {isSidebarOpen && (
@@ -170,8 +170,8 @@ const Sidebar = ({isSidebarOpen , setIsSidebarOpen}) => {
       <nav className="flex flex-col gap-8 py-8 px-7">
         <SidebarItem
           to="/admin-dashboard"
-          icon="/LeftColumn/ic_round-dashboard.png"
-          activeIcon="/LeftColumn/ic_round-dashboard (2).png"
+          icon="./LeftColumn/ic_round-dashboard.png"
+          activeIcon="./LeftColumn/ic_round-dashboard (2).png"
           label="Dashboard"
           isActive={selected === 1}
           isHovered={hovered === 1}
@@ -183,8 +183,8 @@ const Sidebar = ({isSidebarOpen , setIsSidebarOpen}) => {
 
         <SidebarItem
           to="/admin-user"
-          icon="/LeftColumn/User (2).png"
-          activeIcon="/LeftColumn/Rectangle (2).png"
+          icon="./LeftColumn/User (2).png"
+          activeIcon="./LeftColumn/Rectangle (2).png"
           label="User"
           isActive={selected === 2}
           isHovered={hovered === 2}
@@ -196,8 +196,8 @@ const Sidebar = ({isSidebarOpen , setIsSidebarOpen}) => {
 
         <SidebarItem
           to="/admin-property"
-          icon="/LeftColumn/House (1).png"
-          activeIcon="/LeftColumn/Rectangle (1).png"
+          icon="./LeftColumn/House (1).png"
+          activeIcon="./LeftColumn/Rectangle (1).png"
           label="Property"
           isActive={selected === 3}
           isHovered={hovered === 3}
@@ -209,8 +209,8 @@ const Sidebar = ({isSidebarOpen , setIsSidebarOpen}) => {
 
         <SidebarItem
           to="/admin-client"
-          icon="/LeftColumn/accountant 1 (1).png"
-          activeIcon="/LeftColumn/accountant 1.png"
+          icon="./LeftColumn/accountant 1 (1).png"
+          activeIcon="./LeftColumn/accountant 1.png"
           label="Client"
           isActive={selected === 4}
           isHovered={hovered === 4}
@@ -221,8 +221,8 @@ const Sidebar = ({isSidebarOpen , setIsSidebarOpen}) => {
         />
 
         <SidebarItem
-          icon="/LeftColumn/Settings.png"
-          activeIcon="/LeftColumn/icon (1).png"
+          icon="./LeftColumn/Settings.png"
+          activeIcon="./LeftColumn/icon (1).png"
           label="Settings"
           isActive={selected === 5}
           isHovered={hovered === 5}
@@ -261,7 +261,7 @@ const Sidebar = ({isSidebarOpen , setIsSidebarOpen}) => {
           isSidebarOpen ? "justify-start" : "justify-center"
         }`}
       >
-        <img className=" h-5" src="/LeftColumn/Logout.png" alt="Logout" />
+        <img className=" h-5" src="./LeftColumn/Logout.png" alt="Logout" />
         {isSidebarOpen && <span>Logout</span>}
       </button>
     </div>

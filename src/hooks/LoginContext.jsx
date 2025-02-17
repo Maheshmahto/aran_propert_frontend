@@ -43,7 +43,7 @@ const LoginProvider = ({ children }) => {
                 localStorage.removeItem('user');
                 localStorage.removeItem('token');
                 // Redirect the user
-                window.location.href = '/';
+                window.location.href = '/aryan/';
             }
         });
     };

@@ -20,6 +20,7 @@ import Property from "./components/Property.jsx";
 import Client from "./components/Client.jsx";
 import Access from "./components/Access.jsx";
 import InputField from "./components/InputField.jsx";
+import Disriptions from "./components/Disriptions.jsx";
 
 const App = ({ showSidebar }) => {
   const { user } = useLogin();
@@ -43,7 +44,7 @@ const App = ({ showSidebar }) => {
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Login />} />
-            <Route path="/login" element={<Login />} />
+            {/* <Route path="/login" element={<Login />} /> */}
 
             {/* Protected Routes */}
             <Route element={<ProtectedRoute />}>
@@ -69,6 +70,10 @@ const App = ({ showSidebar }) => {
 
             <Route element={<ProtectedRoute />}>
               <Route path="/admin-inputfield" element={<InputField />} />
+            </Route>
+
+            <Route element={<ProtectedRoute />}>
+              <Route path="/property_Disriptions" element={<Disriptions />} />
             </Route>
 
             {/* Protected Routes for User */}
@@ -98,7 +103,7 @@ export default function RootApp() {
   return (
     <LoginProvider>
       <SidebarProvider>
-        <Router>
+        <Router basename="/aryan/">
           <AppWrapper />
         </Router>
       </SidebarProvider>

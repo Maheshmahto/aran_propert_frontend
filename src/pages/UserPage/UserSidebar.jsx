@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import Slider from "@mui/material/Slider";
 import { Box } from "@mui/material";
 import { useLogin } from "../../hooks/LoginContext";
+import {LogOut } from 'lucide-react';
 
 const UserSidebar = ({ properties = [], setFilteredPropertiesSidebar }) => {
   const MIN_PRICE = 100;
@@ -87,7 +88,7 @@ const UserSidebar = ({ properties = [], setFilteredPropertiesSidebar }) => {
     <div className="flex transition-all duration-300">
       <aside className="w-full p-[15px] bg-white border-r shadow-lg">
         <div className="flex items-center justify-center gap-4">
-          <img src="/LeftColumn/Logo.png" alt="logo" className="object-contain w-18 h-18" />
+          <img src="./LeftColumn/Logo.png" alt="logo" className="object-contain w-18 h-18" />
           <div className="mt-3">
             <h1 className="text-lg font-bold">Welcome, Aryans</h1>
             <p className="text-sm mt text-gray-500">{currentDate}</p>
@@ -190,8 +191,10 @@ const UserSidebar = ({ properties = [], setFilteredPropertiesSidebar }) => {
             </div>
           </div> 
 
-        <div className="flex items-center justify-center mt-8 space-x-3">
-          <button onClick={handleLogOut} className="px-4 py-2 text-white bg-red-600 rounded-md hover:bg-red-700">
+        <div className="flex items-center justify-center mt-[90%] space-x-3">
+        <LogOut className="w-6 h-6" />
+          <button onClick={handleLogOut} className="px-4 py-2 text-white bg-blue-800 rounded-md hover:bg-red-700">
+          
             Logout
           </button>
         </div>
