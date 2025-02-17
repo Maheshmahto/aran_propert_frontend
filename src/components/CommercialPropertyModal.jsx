@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import Modal from "react-modal";
 import { MdCancel } from "react-icons/md";
 import axios from "../helper/axios";
 import Swal from "sweetalert2";
 
 const CommercialPropertyModal = ({ isOpen, onClose, id }) => {
-  console.log("Property ID:", id);
+  // console.log("Property ID:", id);
 
   const [propertyId, setPropertyId] = useState(id || "");
 
@@ -42,7 +42,7 @@ const CommercialPropertyModal = ({ isOpen, onClose, id }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form Submitted:", formData);
+    // console.log("Form Submitted:", formData);
     await furnishedProperty();
   };
 

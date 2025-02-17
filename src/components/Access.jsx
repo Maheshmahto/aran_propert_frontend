@@ -5,13 +5,13 @@ import Swal from "sweetalert2";
 
 const Access = () => {
   const [users, setUsers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get("/api/get_all_users");
         setUsers(Array.isArray(response.data.data) ? response.data.data : []);
-        console.log(response.data);
       } catch (error) {
         console.error("Error fetching users:", error);
       }
@@ -29,7 +29,7 @@ const Access = () => {
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, update it!",
     });
-  
+
     if (isConfirmed) {
       try {
         const response = await axios.put(`/api/permissions/${permissionType}/${userId}`, {
@@ -48,7 +48,6 @@ const Access = () => {
           });
         }
       } catch (error) {
-        console.error(error?.response?.data?.detail);
         Swal.fire({
           icon: "error",
           title: "Permission update failed",
@@ -57,14 +56,23 @@ const Access = () => {
       }
     }
   };
-  
+
+  const filteredUsers = users.filter((user) =>
+    user.username.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="mx-10 ml-20 my-24">
       <div className="flex justify-between h-10 ">
         <div className="flex gap-4 border border-gray-400 w-[30%] px-4 py-7 items-center ">
           <img className="object-none" src="/LeftColumn/search-normal.png" alt="" />
-          <input className="outline-none" type="text" placeholder="search" />
+          <input
+            className="outline-none"
+            type="text"
+            placeholder="Search by Name"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
 
         <div>
@@ -84,9 +92,8 @@ const Access = () => {
             <th className="border">CAN DELETE</th>
             <th className="border">CAN VIEW</th>
             <th className="border">CAN PRINT</th>
-            {/* <th className="border"> EDIT/DELETE</th> */}
           </tr>
-          {users.map((user) => (
+          {filteredUsers.map((user) => (
             <tr key={user.user_id}>
               <td>{user.username}</td>
               <td>{user.user_type}</td>
@@ -125,15 +132,6 @@ const Access = () => {
                   onChange={(e) => updatePermission(user.user_id, "print-report", e.target.checked)}
                 />
               </td>
-              {/* <td className="flex justify-center gap-3 py-4">
-                <button>
-                  <img src="/LeftColumn/bxs_edit.png" alt="" />
-                </button>
-                <img src="/LeftColumn/_.png" alt="" />
-                <button>
-                  <img src="/LeftColumn/ic_baseline-delete.png" alt="" />
-                </button>
-              </td> */}
             </tr>
           ))}
         </table>

@@ -11,7 +11,7 @@ const PropertyTypeDropdown = ({ onChange }) => {
   const ProTypes = async () => {
     try {
       const response = await axios.get('/api/property_types/');
-      console.log("API Response:", response.data);
+      // console.log("API Response:", response.data);
       setProCategories(response.data);
     } catch (error) {
       console.error("Error fetching property types:", error);
@@ -25,7 +25,7 @@ const PropertyTypeDropdown = ({ onChange }) => {
   }, []);
 
   useEffect(() => {
-    console.log("Updated Property Categories:", ProCategories);
+    // console.log("Updated Property Categories:", ProCategories);
   }, [ProCategories]);
 
   // const handleTypeSelect = (type) => {

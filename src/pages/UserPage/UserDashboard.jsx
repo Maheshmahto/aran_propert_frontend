@@ -19,6 +19,7 @@ const UserDashboard = () => {
   const [filter, setFilter] = useState(false);
   const [propertyTypeShow, setPropertyTypeShow] = useState(false);
   const [filterpropertyInput, setFilterPropertyInput] = useState("");
+  const [selectedPropertyType, setSelectedPropertyType] = useState("");
 
   useEffect(() => {
     fetchProperties();
@@ -36,6 +37,7 @@ const UserDashboard = () => {
           Authorization: `Bearer ${token}`,
         },
       });
+      console.log(response.data);
       console.log(response.data);
       if (!response.data) throw new Error("No data received");
 
@@ -89,15 +91,26 @@ const UserDashboard = () => {
     }
   };
 
+  // const filteredProperties = (
+  //   filteredPropertiesSidebar.length ? filteredPropertiesSidebar : properties
+  // ).filter((property) =>
+  //   Object.values(property || {}).some((value) =>
+  //     String(value).toLowerCase().includes(searchTerm.toLowerCase())
+  //   )
+  // );
   const filteredProperties = (
     filteredPropertiesSidebar.length ? filteredPropertiesSidebar : properties
-  ).filter((property) =>
-    Object.values(property || {}).some((value) =>
+  )
+  .filter(property => 
+    (selectedPropertyType === "" || property.property_type === selectedPropertyType) &&
+    Object.values(property || {}).some(value =>
       String(value).toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
+  
 
   console.log(filteredProperties);
+  console.log(filteredProperties.property_type);
 
   const showContactDetails = (property) => {
     console.log(property);
@@ -147,14 +160,26 @@ const UserDashboard = () => {
 
           <div className="flex justify-between w-full py-6">
             <div className="w-[100%] flex gap-2">
-              <select
+              {/* <select
                 className="border border-gray-300 rounded p-3 w-[20%]"
                 defaultValue="Property Type"
               >
-                <option disabled>Property Type</option>
-                <option>Commercial</option>
-                <option>Office spaces</option>
-              </select>
+               <option disabled>Property Type</option>
+
+                {
+                
+                }
+              </select> */}
+              <select
+  className="border border-gray-300 rounded p-3 w-[20%]"
+  value={selectedPropertyType}
+  onChange={(e) => setSelectedPropertyType(e.target.value)}
+>
+  <option value="">All Property Types</option>
+  {[...new Set(properties.map((p) => p.property_type))].map((type) => (
+    <option key={type} value={type}>{type}</option>
+  ))}
+</select>
               <label className=" border border-gray-300 text-gray-400 rounded p-3 ml-6 w-[20%]">
                 <option>Location</option>
               </label>

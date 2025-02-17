@@ -23,7 +23,7 @@ const Property = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(response.data);
+      // console.log(response.data);
       if (!response.data) throw new Error("No data received");
 
       const flattenedProperties = response.data.flatMap((city) =>
@@ -115,7 +115,7 @@ const Property = () => {
 
   return (
     <div className="pb-20 mx-10 pl-20 my-24 w-full overflow-x-auto">
-      <div className="flex justify-between h-10">
+      <div className="flex justify-between h-10 my-5 ">
         <div className="flex gap-4 items-center border border-gray-300 rounded-md w-[30%] px-4 py-2">
           <img
             className="object-none"

@@ -1,15 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PropertyTypeDropdown from "./PropertyTypeDropdown";
 import ReopenDateDropdown from "./ReopenDateDropdown";
 import { MdCancel } from "react-icons/md";
 import axios from "../helper/axios";
 import Swal from "sweetalert2";
+// import axios from "../helper/axios";
 
 const PropertyForm = ({ setShowPropertyForm }) => {
   const tabs = ["AddProperty", "AreaDetails", "Contact"];
   const [activeTab, setActiveTab] = useState(0);
   const token = localStorage.getItem("token");
   const [areaName,setAreaName]=useState('mm');
+  const [DescValue,setDescValue]=useState('');
   const [formData, setFormData] = useState({
     city_name: "",
     sublocations: [
@@ -23,7 +25,7 @@ const PropertyForm = ({ setShowPropertyForm }) => {
                 project_name: "",
                 building: "",
                 address2: "",
-                description: "",
+                description:'',
                 area:areaName,
                 pin: "",
                 company: "",
@@ -62,92 +64,40 @@ const PropertyForm = ({ setShowPropertyForm }) => {
     ],
   });
 
-  // const handleInputChange = (e, section) => {
-  //   const { name, value } = e.target;
-
-  //   if (section === "property") {
-  //     setFormData((prev) => ({
-  //       ...prev,
-  //       ...(name === "city_name" ? { city_name: value } : {}),
-  //       sublocations: [
-  //         {
-  //           ...prev.sublocations[0],
-  //           ...(name === "sublocation_name" ? { sublocation_name: value } : {}),
-  //           areas: [
-  //             {
-  //               ...prev.sublocations[0].areas[0],
-  //               ...(name === "area_name" ? { area_name: value } : {}),
-  //               properties: [
-  //                 {
-  //                   ...prev.sublocations[0].areas[0].properties[0],
-  //                   [name]: value,
-  //                 },
-  //               ],
-  //             },
-  //           ],
-  //         },
-  //       ],
-  //     }));
-  //   } else if (section === "propertyDetails") {
-  //     setFormData((prev) => ({
-  //       ...prev,
-  //       sublocations: [
-  //         {
-  //           ...prev.sublocations[0],
-  //           areas: [
-  //             {
-  //               ...prev.sublocations[0].areas[0],
-  //               properties: [
-  //                 {
-  //                   ...prev.sublocations[0].areas[0].properties[0],
-  //                   property_details: [
-  //                     {
-  //                       ...prev.sublocations[0].areas[0].properties[0]
-  //                         .property_details[0],
-  //                       [name]: value,
-  //                     },
-  //                   ],
-  //                 },
-  //               ],
-  //             },
-  //           ],
-  //         },
-  //       ],
-  //     }));
-  //   } else if (section === "contact") {
-  //     setFormData((prev) => ({
-  //       ...prev,
-  //       sublocations: [
-  //         {
-  //           ...prev.sublocations[0],
-  //           areas: [
-  //             {
-  //               ...prev.sublocations[0].areas[0],
-  //               properties: [
-  //                 {
-  //                   ...prev.sublocations[0].areas[0].properties[0],
-  //                   property_details: [
-  //                     {
-  //                       ...prev.sublocations[0].areas[0].properties[0]
-  //                         .property_details[0],
-  //                       contacts: [
-  //                         {
-  //                           ...prev.sublocations[0].areas[0].properties[0]
-  //                             .property_details[0].contacts[0],
-  //                           [name]: value,
-  //                         },
-  //                       ],
-  //                     },
-  //                   ],
-  //                 },
-  //               ],
-  //             },
-  //           ],
-  //         },
-  //       ],
-  //     }));
-  //   }
-  // };
+  const handleDescriptionChange = (e) => {
+    const selectedId = e.target.value;
+    const selectedDesc = Description.find((desc) => desc.des_id === selectedId);
+    setDescValue(selectedId);
+    setFormData((prev) => ({
+      ...prev,
+      sublocations: [
+        {
+          ...prev.sublocations[0],
+          areas: [
+            {
+              ...prev.sublocations[0].areas[0],
+              properties: [
+                {
+                  ...prev.sublocations[0].areas[0].properties[0],
+                  description: selectedDesc?.description || "",
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    }));
+  };
+  
+const [Description,setDescription]=useState([]);
+ const GetPropDesc=async()=>{
+  const response= await axios.get('/api/descriptions/');
+  console.log(response.data);
+  setDescription(response.data);
+ }
+ useEffect( ()=>{
+  GetPropDesc();
+ },[])
   const handleInputChange = (e, section) => {
     const { name, value, type_id } = e.target;
   
@@ -276,7 +226,9 @@ const PropertyForm = ({ setShowPropertyForm }) => {
     }
   };
 
-  
+  useEffect(()=>{
+    console.log(DescValue)
+  },[DescValue])
   return (
 
   
@@ -416,14 +368,25 @@ const PropertyForm = ({ setShowPropertyForm }) => {
               onChange={(e) => handleInputChange(e, "property")}
             />
             <label className="font-medium">Description</label>
-            <textarea
+            <select
               type="text"
               required
               name="description"
               className="w-full p-3 border rounded-lg shadow-sm"
               rows="3"
-              onChange={(e) => handleInputChange(e, "property")}
-            ></textarea>
+              // onChange={(e)=>setDescValue(e.target.value)}
+              onChange={handleDescriptionChange}
+            > 
+            {
+              Description.map((desc)=>(
+                
+                <option key={desc.des_id} value={desc.des_id} >{desc.description}</option>
+
+              ))
+            }
+            
+          
+            </select>
           </div>
         </form>
       )}
