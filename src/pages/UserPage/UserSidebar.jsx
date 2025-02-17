@@ -113,7 +113,7 @@ const UserSidebar = ({ properties = [], setFilteredPropertiesSidebar }) => {
       <aside className="w-full p-[15px] bg-white border-r shadow-lg">
         <div className="flex items-center justify-center gap-4">
           <img
-            src="/LeftColumn/Logo.png"
+            src="./LeftColumn/Logo.png"
             alt="logo"
             className="object-contain w-18 h-18"
           />
