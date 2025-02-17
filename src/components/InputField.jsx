@@ -1,8 +1,7 @@
-import React from "react";
 import { useState } from "react";
 import Model from "react-modal";
 import { MdCancel } from "react-icons/md";
-import { useEffect} from "react";
+import { useEffect } from "react";
 import axios from "../helper/axios";
 
 const InputField = () => {
@@ -16,7 +15,7 @@ const InputField = () => {
         console.log(response.data);
 
         setUsers(Array.isArray(response.data.data) ? response.data.data : []);
-      
+
         console.log(users);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -25,7 +24,7 @@ const InputField = () => {
     fetchUsers();
   }, []);
   return (
-    <div className="mx-10 my-24">
+    <div className="mx-10 ml-20 my-24">
       <div className="mt-7 table-container ">
         <div className="flex justify-between w-[70%] items-center ">
           <div className="px-20 py-5 shadow-xl">Property type</div>
@@ -91,17 +90,12 @@ const InputField = () => {
             <th className="border"> ID</th>
             <th className="border ">Name</th>
           </tr>
-          {
-            users.map((user)=>(
-              <tr className="p-4">
+          {users.map((user) => (
+            <tr className="p-4" key={user.user_id}>
               <td className="p-4">{user.user_id}</td>
               <td>{user.username}</td>
             </tr>
-            ))           
-          }
-         
-
-          
+          ))}
         </table>
       </div>
     </div>

@@ -60,7 +60,7 @@ const Access = () => {
   
 
   return (
-    <div className="mx-10 my-24">
+    <div className="mx-10 ml-20 my-24">
       <div className="flex justify-between h-10 ">
         <div className="flex gap-4 border border-gray-400 w-[30%] px-4 py-7 items-center ">
           <img className="object-none" src="/LeftColumn/search-normal.png" alt="" />

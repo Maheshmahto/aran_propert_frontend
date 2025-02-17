@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import PropertyForm from "./PropertyForm";
 import axios from "../helper/axios";
 import Swal from "sweetalert2";
@@ -114,7 +114,7 @@ const Property = () => {
   };
 
   return (
-    <div className="pb-20 mx-10 pl-20 my-24">
+    <div className="pb-20 mx-10 pl-20 my-24 w-full overflow-x-auto">
       <div className="flex justify-between h-10">
         <div className="flex gap-4 items-center border border-gray-300 rounded-md w-[30%] px-4 py-2">
           <img
@@ -147,13 +147,13 @@ const Property = () => {
           onSubmit={fetchProperties}
         />
       ) : (
-        <div className="overflow-x-auto">
+        <div className="w-full overflow-x-auto">
           {loading ? (
             <div className="mt-8 text-center">Loading properties...</div>
           ) : filteredProperties.length === 0 ? (
             <div className="mt-8 text-center">No properties found</div>
           ) : (
-            <table className="w-full mt-12 min-w-max">
+            <table className="w-full min-w-max border-collapse border border-gray-300">
               <thead>
                 <tr className="h-12 text-white bg-blue-800">
                   <th className="px-4 border">Project Name</th>

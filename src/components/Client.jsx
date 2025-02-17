@@ -132,7 +132,7 @@ const Client = () => {
   };
 
   return (
-    <div className="pb-16 mx-10 my-24">
+    <div className="pb-16 pl-20 mx-10 my-24">
       <div className="flex justify-between">
         {/* Search Input */}
         <div className="flex gap-4 items-center border border-gray-300 rounded-md w-[30%] px-4 py-2">
